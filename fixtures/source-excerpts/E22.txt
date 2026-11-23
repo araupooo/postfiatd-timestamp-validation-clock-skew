@@ -1,0 +1,53 @@
+# Source excerpt E22 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/LedgerTiming.h, lines 78-122.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: 371b38d96e1cee1662f6a585a6d75bd72e59d2329f9bdd34f66beb0ff3470031
+# Source file git blob SHA: 434f19b081886221689718818c6aae53f89a074b
+# Source file size: 6559 bytes
+
+# --- src/xrpld/consensus/LedgerTiming.h lines 78-122 ---
+template <class Rep, class Period, class Seq>
+std::chrono::duration<Rep, Period>
+getNextLedgerTimeResolution(
+    std::chrono::duration<Rep, Period> previousResolution,
+    bool previousAgree,
+    Seq ledgerSeq)
+{
+    XRPL_ASSERT(
+        ledgerSeq != Seq{0},
+        "ripple:getNextLedgerTimeResolution : valid ledger sequence");
+
+    using namespace std::chrono;
+    // Find the current resolution:
+    auto iter = std::find(
+        std::begin(ledgerPossibleTimeResolutions),
+        std::end(ledgerPossibleTimeResolutions),
+        previousResolution);
+    XRPL_ASSERT(
+        iter != std::end(ledgerPossibleTimeResolutions),
+        "ripple:getNextLedgerTimeResolution : found time resolution");
+
+    // This should never happen, but just as a precaution
+    if (iter == std::end(ledgerPossibleTimeResolutions))
+        return previousResolution;
+
+    // If we did not previously agree, we try to decrease the resolution to
+    // improve the chance that we will agree now.
+    if (!previousAgree &&
+        (ledgerSeq % Seq{decreaseLedgerTimeResolutionEvery} == Seq{0}))
+    {
+        if (++iter != std::end(ledgerPossibleTimeResolutions))
+            return *iter;
+    }
+
+    // If we previously agreed, we try to increase the resolution to determine
+    // if we can continue to agree.
+    if (previousAgree &&
+        (ledgerSeq % Seq{increaseLedgerTimeResolutionEvery} == Seq{0}))
+    {
+        if (iter-- != std::begin(ledgerPossibleTimeResolutions))
+            return *iter;
+    }
+
+    return previousResolution;
+}

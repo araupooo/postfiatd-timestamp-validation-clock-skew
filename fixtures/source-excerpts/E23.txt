@@ -1,0 +1,28 @@
+# Source excerpt E23 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/LedgerTiming.h, lines 124-143.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: 371b38d96e1cee1662f6a585a6d75bd72e59d2329f9bdd34f66beb0ff3470031
+# Source file git blob SHA: 434f19b081886221689718818c6aae53f89a074b
+# Source file size: 6559 bytes
+
+# --- src/xrpld/consensus/LedgerTiming.h lines 124-143 ---
+/** Calculates the close time for a ledger, given a close time resolution.
+
+    @param closeTime The time to be rounded
+    @param closeResolution The resolution
+    @return @b closeTime rounded to the nearest multiple of @b closeResolution.
+    Rounds up if @b closeTime is midway between multiples of @b closeResolution.
+*/
+template <class Clock, class Duration, class Rep, class Period>
+std::chrono::time_point<Clock, Duration>
+roundCloseTime(
+    std::chrono::time_point<Clock, Duration> closeTime,
+    std::chrono::duration<Rep, Period> closeResolution)
+{
+    using time_point = decltype(closeTime);
+    if (closeTime == time_point{})
+        return closeTime;
+
+    closeTime += (closeResolution / 2);
+    return closeTime - (closeTime.time_since_epoch() % closeResolution);
+}

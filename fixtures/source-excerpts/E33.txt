@@ -1,0 +1,23 @@
+# Source excerpt E33 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/Consensus.h, lines 1433-1447.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: c600a12673215a68513542bac16b89dccabff37f3652d79b8159860b00898dd8
+# Source file git blob SHA: 9ccc080857e2be382365dff5f349544b9907d9cf
+# Source file size: 65913 bytes
+
+# --- src/xrpld/consensus/Consensus.h lines 1433-1447 ---
+template <class Adaptor>
+void
+Consensus<Adaptor>::closeLedger(std::unique_ptr<std::stringstream> const& clog)
+{
+    // We should not be closing if we already have a position
+    XRPL_ASSERT(!result_, "ripple::Consensus::closeLedger : result is not set");
+
+    phase_ = ConsensusPhase::establish;
+    JLOG(j_.debug()) << "transitioned to ConsensusPhase::establish";
+    rawCloseTimes_.self = now_;
+    peerUnchangedCounter_ = 0;
+    establishCounter_ = 0;
+
+    result_.emplace(adaptor_.onClose(previousLedger_, now_, mode_.get()));
+    result_->roundTime.reset(clock_.now());

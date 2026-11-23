@@ -1,0 +1,17 @@
+# Source excerpt E32 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/app/misc/NetworkOPs.cpp, lines 1095-1103.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: 00d9166875577d5e620b3954ec107b0ba81b3884f180463fbcff169a2304991d
+# Source file git blob SHA: 57331a855843f0a528289fb3a96f3251926a3aa5
+# Source file size: 158487 bytes
+
+# --- src/xrpld/app/misc/NetworkOPs.cpp lines 1095-1103 ---
+        if (origMode != newMode)
+        {
+            CLOG(clog.ss())
+                << ", changing to " << strOperatingMode(newMode, true);
+        }
+        CLOG(clog.ss()) << ". ";
+    }
+
+    mConsensus.timerEntry(app_.timeKeeper().closeTime(), clog.ss());

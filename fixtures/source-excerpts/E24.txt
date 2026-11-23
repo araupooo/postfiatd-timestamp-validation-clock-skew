@@ -1,0 +1,24 @@
+# Source excerpt E24 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/LedgerTiming.h, lines 154-169.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: 371b38d96e1cee1662f6a585a6d75bd72e59d2329f9bdd34f66beb0ff3470031
+# Source file git blob SHA: 434f19b081886221689718818c6aae53f89a074b
+# Source file size: 6559 bytes
+
+# --- src/xrpld/consensus/LedgerTiming.h lines 154-169 ---
+template <class Clock, class Duration, class Rep, class Period>
+std::chrono::time_point<Clock, Duration>
+effCloseTime(
+    std::chrono::time_point<Clock, Duration> closeTime,
+    std::chrono::duration<Rep, Period> resolution,
+    std::chrono::time_point<Clock, Duration> priorCloseTime)
+{
+    using namespace std::chrono_literals;
+    using time_point = decltype(closeTime);
+
+    if (closeTime == time_point{})
+        return closeTime;
+
+    return std::max<time_point>(
+        roundCloseTime(closeTime, resolution), (priorCloseTime + 1s));
+}

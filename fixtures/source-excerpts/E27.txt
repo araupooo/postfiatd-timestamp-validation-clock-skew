@@ -1,0 +1,33 @@
+# Source excerpt E27 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/app/consensus/RCLConsensus.cpp, lines 704-728.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: 72716393a820832d7fd6f6084f4ac9534fdc7ccf09c10f5aa8d2f129828a0cee
+# Source file git blob SHA: 457555cc1c83cb617a6838e0099fc93e1d715b49
+# Source file size: 37567 bytes
+
+# --- src/xrpld/app/consensus/RCLConsensus.cpp lines 704-728 ---
+    //-------------------------------------------------------------------------
+    // we entered the round with the network,
+    // see how close our close time is to other node's
+    //  close time reports, and update our clock.
+    if ((mode == ConsensusMode::proposing ||
+         mode == ConsensusMode::observing) &&
+        !consensusFail)
+    {
+        JLOG(j_.info()) << "We closed at "
+                        << rawCloseTimes.self.time_since_epoch().count();
+        int closeCount = 1;
+        for (auto const& [t, v] : rawCloseTimes.peers)
+        {
+            JLOG(j_.info()) << std::to_string(v) << " time votes for "
+                            << std::to_string(t.time_since_epoch().count());
+            closeCount += v;
+        }
+
+        // Median handles outliers better than mean.
+        auto const offset = medianCloseOffset(rawCloseTimes);
+        JLOG(j_.info()) << "Our close offset is estimated at " << offset.count()
+                        << " (" << closeCount << ")";
+
+        app_.timeKeeper().adjustCloseTime(offset);
+    }

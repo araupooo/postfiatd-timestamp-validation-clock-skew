@@ -1,0 +1,103 @@
+# Source excerpt E29 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/Consensus.cpp, lines 176-270.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: 45a11b3c51b3cbc028feb4f426caa5b603ab1bb56a53ca616cf3e16d3a483454
+# Source file git blob SHA: e7b66899a83569f1120729a3cc2bd0e25540b622
+# Source file size: 10139 bytes
+
+# --- src/xrpld/consensus/Consensus.cpp lines 176-270 ---
+ConsensusState
+checkConsensus(
+    std::size_t prevProposers,
+    std::size_t currentProposers,
+    std::size_t currentAgree,
+    std::size_t currentFinished,
+    std::chrono::milliseconds previousAgreeTime,
+    std::chrono::milliseconds currentAgreeTime,
+    bool stalled,
+    ConsensusParms const& parms,
+    bool proposing,
+    beast::Journal j,
+    std::unique_ptr<std::stringstream> const& clog)
+{
+    CLOG(clog) << "checkConsensus: prop=" << currentProposers << "/"
+               << prevProposers << " agree=" << currentAgree
+               << " validated=" << currentFinished
+               << " time=" << currentAgreeTime.count() << "/"
+               << previousAgreeTime.count() << " proposing? " << proposing
+               << " minimum duration to reach consensus: "
+               << parms.ledgerMIN_CONSENSUS.count() << "ms"
+               << " max consensus time " << parms.ledgerMAX_CONSENSUS.count()
+               << "ms"
+               << " minimum consensus percentage: " << parms.minCONSENSUS_PCT
+               << ". ";
+
+    if (currentAgreeTime <= parms.ledgerMIN_CONSENSUS)
+    {
+        CLOG(clog) << "Not reached. ";
+        return ConsensusState::No;
+    }
+
+    if (currentProposers < (prevProposers * 3 / 4))
+    {
+        // Less than 3/4 of the last ledger's proposers are present; don't
+        // rush: we may need more time.
+        if (currentAgreeTime < (previousAgreeTime + parms.ledgerMIN_CONSENSUS))
+        {
+            JLOG(j.trace()) << "too fast, not enough proposers";
+            CLOG(clog) << "Too fast, not enough proposers. Not reached. ";
+            return ConsensusState::No;
+        }
+    }
+
+    // Have we, together with the nodes on our UNL list, reached the threshold
+    // to declare consensus?
+    if (checkConsensusReached(
+            currentAgree,
+            currentProposers,
+            proposing,
+            parms.minCONSENSUS_PCT,
+            currentAgreeTime > parms.ledgerMAX_CONSENSUS,
+            stalled,
+            clog))
+    {
+        JLOG((stalled ? j.warn() : j.debug()))
+            << "normal consensus" << (stalled ? ", but stalled" : "");
+        CLOG(clog) << "reached" << (stalled ? ", but stalled." : ".");
+        return ConsensusState::Yes;
+    }
+
+    // Have sufficient nodes on our UNL list moved on and reached the threshold
+    // to declare consensus?
+    if (checkConsensusReached(
+            currentFinished,
+            currentProposers,
+            false,
+            parms.minCONSENSUS_PCT,
+            currentAgreeTime > parms.ledgerMAX_CONSENSUS,
+            false,
+            clog))
+    {
+        JLOG(j.warn()) << "We see no consensus, but enough nodes have moved on";
+        CLOG(clog) << "We see no consensus, but enough nodes have moved on";
+        return ConsensusState::MovedOn;
+    }
+
+    std::chrono::milliseconds const maxAgreeTime =
+        previousAgreeTime * parms.ledgerABANDON_CONSENSUS_FACTOR;
+    if (currentAgreeTime > std::clamp(
+                               maxAgreeTime,
+                               parms.ledgerMAX_CONSENSUS,
+                               parms.ledgerABANDON_CONSENSUS))
+    {
+        JLOG(j.warn()) << "consensus taken too long";
+        CLOG(clog) << "Consensus taken too long. ";
+        // Note the Expired result may be overridden by the caller.
+        return ConsensusState::Expired;
+    }
+
+    // no consensus yet
+    JLOG(j.trace()) << "no consensus";
+    CLOG(clog) << "No consensus. ";
+    return ConsensusState::No;
+}

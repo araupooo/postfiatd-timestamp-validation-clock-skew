@@ -1,0 +1,37 @@
+# Source excerpt E31 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/Consensus.h, lines 1501-1529.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: c600a12673215a68513542bac16b89dccabff37f3652d79b8159860b00898dd8
+# Source file git blob SHA: 9ccc080857e2be382365dff5f349544b9907d9cf
+# Source file size: 65913 bytes
+
+# --- src/xrpld/consensus/Consensus.h lines 1501-1529 ---
+    // Compute a cutoff time
+    auto const peerCutoff = now_ - parms.proposeFRESHNESS;
+    auto const ourCutoff = now_ - parms.proposeINTERVAL;
+    CLOG(clog) << "updateOurPositions. peerCutoff " << to_string(peerCutoff)
+               << ", ourCutoff " << to_string(ourCutoff) << ". ";
+
+    // Verify freshness of peer positions and compute close times
+    std::map<NetClock::time_point, int> closeTimeVotes;
+    {
+        auto it = currPeerPositions_.begin();
+        while (it != currPeerPositions_.end())
+        {
+            Proposal_t const& peerProp = it->second.proposal();
+            if (peerProp.isStale(peerCutoff))
+            {
+                // peer's proposal is stale, so remove it
+                NodeID_t const& peerID = peerProp.nodeID();
+                JLOG(j_.warn()) << "Removing stale proposal from " << peerID;
+                for (auto& dt : result_->disputes)
+                    dt.second.unVote(peerID);
+                it = currPeerPositions_.erase(it);
+            }
+            else
+            {
+                // proposal is still fresh
+                ++closeTimeVotes[asCloseTime(peerProp.closeTime())];
+                ++it;
+            }
+        }

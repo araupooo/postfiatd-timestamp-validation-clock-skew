@@ -1,0 +1,143 @@
+# Source excerpt E25 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/Consensus.h, lines 1507-1641.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: c600a12673215a68513542bac16b89dccabff37f3652d79b8159860b00898dd8
+# Source file git blob SHA: 9ccc080857e2be382365dff5f349544b9907d9cf
+# Source file size: 65913 bytes
+
+# --- src/xrpld/consensus/Consensus.h lines 1507-1641 ---
+    // Verify freshness of peer positions and compute close times
+    std::map<NetClock::time_point, int> closeTimeVotes;
+    {
+        auto it = currPeerPositions_.begin();
+        while (it != currPeerPositions_.end())
+        {
+            Proposal_t const& peerProp = it->second.proposal();
+            if (peerProp.isStale(peerCutoff))
+            {
+                // peer's proposal is stale, so remove it
+                NodeID_t const& peerID = peerProp.nodeID();
+                JLOG(j_.warn()) << "Removing stale proposal from " << peerID;
+                for (auto& dt : result_->disputes)
+                    dt.second.unVote(peerID);
+                it = currPeerPositions_.erase(it);
+            }
+            else
+            {
+                // proposal is still fresh
+                ++closeTimeVotes[asCloseTime(peerProp.closeTime())];
+                ++it;
+            }
+        }
+    }
+
+    // This will stay unseated unless there are any changes
+    std::optional<TxSet_t> ourNewSet;
+
+    // Update votes on disputed transactions
+    {
+        std::optional<typename TxSet_t::MutableTxSet> mutableSet;
+        for (auto& [txId, dispute] : result_->disputes)
+        {
+            // Because the threshold for inclusion increases,
+            //  time can change our position on a dispute
+            if (dispute.updateVote(
+                    convergePercent_,
+                    mode_.get() == ConsensusMode::proposing,
+                    parms))
+            {
+                if (!mutableSet)
+                    mutableSet.emplace(result_->txns);
+
+                if (dispute.getOurVote())
+                {
+                    // now a yes
+                    mutableSet->insert(dispute.tx());
+                }
+                else
+                {
+                    // now a no
+                    mutableSet->erase(txId);
+                }
+            }
+        }
+
+        if (mutableSet)
+            ourNewSet.emplace(std::move(*mutableSet));
+    }
+
+    NetClock::time_point consensusCloseTime = {};
+    haveCloseTimeConsensus_ = false;
+
+    if (currPeerPositions_.empty())
+    {
+        // no other times
+        haveCloseTimeConsensus_ = true;
+        consensusCloseTime = asCloseTime(result_->position.closeTime());
+    }
+    else
+    {
+        // We don't track rounds for close time, so just pass 0s
+        auto const [neededWeight, newState] = getNeededWeight(
+            parms, closeTimeAvalancheState_, convergePercent_, 0, 0);
+        if (newState)
+            closeTimeAvalancheState_ = *newState;
+        CLOG(clog) << "neededWeight " << neededWeight << ". ";
+
+        int participants = currPeerPositions_.size();
+        if (mode_.get() == ConsensusMode::proposing)
+        {
+            ++closeTimeVotes[asCloseTime(result_->position.closeTime())];
+            ++participants;
+        }
+
+        // Threshold for non-zero vote
+        int threshVote = participantsNeeded(participants, neededWeight);
+
+        // Threshold to declare consensus
+        int const threshConsensus =
+            participantsNeeded(participants, parms.avCT_CONSENSUS_PCT);
+
+        std::stringstream ss;
+        ss << "Proposers:" << currPeerPositions_.size()
+           << " nw:" << neededWeight << " thrV:" << threshVote
+           << " thrC:" << threshConsensus;
+        JLOG(j_.info()) << ss.str();
+        CLOG(clog) << ss.str();
+
+        // Walk the votes highest-time first so that, among close times tied
+        // for the most votes, the earliest wins. The smaller value is the
+        // safer choice: without close-time consensus this round, the winner
+        // only updates our position for the next proposal, and a too-early
+        // time is bounded below by the prior ledger's close time. Only the
+        // tie-break changes; the bin with the most votes still wins.
+        for (auto const& [t, v] : std::views::reverse(closeTimeVotes))
+        {
+            JLOG(j_.debug())
+                << "CCTime: seq "
+                << static_cast<std::uint32_t>(previousLedger_.seq()) + 1 << ": "
+                << t.time_since_epoch().count() << " has " << v << ", "
+                << threshVote << " required";
+
+            if (v >= threshVote)
+            {
+                // A close time has enough votes for us to try to agree
+                consensusCloseTime = t;
+                threshVote = v;
+
+                if (threshVote >= threshConsensus)
+                    haveCloseTimeConsensus_ = true;
+            }
+        }
+
+        if (!haveCloseTimeConsensus_)
+        {
+            JLOG(j_.debug())
+                << "No CT consensus:"
+                << " Proposers:" << currPeerPositions_.size()
+                << " Mode:" << to_string(mode_.get())
+                << " Thresh:" << threshConsensus
+                << " Pos:" << consensusCloseTime.time_since_epoch().count();
+            CLOG(clog) << "No close time consensus. ";
+        }
+    }

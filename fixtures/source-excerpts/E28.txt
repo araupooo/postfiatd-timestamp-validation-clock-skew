@@ -1,0 +1,86 @@
+# Source excerpt E28 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/Consensus.cpp, lines 26-103.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: 45a11b3c51b3cbc028feb4f426caa5b603ab1bb56a53ca616cf3e16d3a483454
+# Source file git blob SHA: e7b66899a83569f1120729a3cc2bd0e25540b622
+# Source file size: 10139 bytes
+
+# --- src/xrpld/consensus/Consensus.cpp lines 26-103 ---
+bool
+shouldCloseLedger(
+    bool anyTransactions,
+    std::size_t prevProposers,
+    std::size_t proposersClosed,
+    std::size_t proposersValidated,
+    std::chrono::milliseconds prevRoundTime,
+    std::chrono::milliseconds
+        timeSincePrevClose,              // Time since last ledger's close time
+    std::chrono::milliseconds openTime,  // Time waiting to close this ledger
+    std::chrono::milliseconds idleInterval,
+    ConsensusParms const& parms,
+    beast::Journal j,
+    std::unique_ptr<std::stringstream> const& clog)
+{
+    CLOG(clog) << "shouldCloseLedger params anyTransactions: "
+               << anyTransactions << ", prevProposers: " << prevProposers
+               << ", proposersClosed: " << proposersClosed
+               << ", proposersValidated: " << proposersValidated
+               << ", prevRoundTime: " << prevRoundTime.count() << "ms"
+               << ", timeSincePrevClose: " << timeSincePrevClose.count() << "ms"
+               << ", openTime: " << openTime.count() << "ms"
+               << ", idleInterval: " << idleInterval.count() << "ms"
+               << ", ledgerMIN_CLOSE: " << parms.ledgerMIN_CLOSE.count() << "ms"
+               << ". ";
+    using namespace std::chrono_literals;
+    if ((prevRoundTime < -1s) || (prevRoundTime > 10min) ||
+        (timeSincePrevClose > 10min))
+    {
+        // These are unexpected cases, we just close the ledger
+        std::stringstream ss;
+        ss << "shouldCloseLedger Trans=" << (anyTransactions ? "yes" : "no")
+           << " Prop: " << prevProposers << "/" << proposersClosed
+           << " Secs: " << timeSincePrevClose.count()
+           << " (last: " << prevRoundTime.count() << ")";
+
+        JLOG(j.warn()) << ss.str();
+        CLOG(clog) << "closing ledger: " << ss.str() << ". ";
+        return true;
+    }
+
+    if ((proposersClosed + proposersValidated) > (prevProposers / 2))
+    {
+        // If more than half of the network has closed, we close
+        JLOG(j.trace()) << "Others have closed";
+        CLOG(clog) << "closing ledger because enough others have already. ";
+        return true;
+    }
+
+    if (!anyTransactions)
+    {
+        // Only close at the end of the idle interval
+        CLOG(clog) << "no transactions, returning. ";
+        return timeSincePrevClose >= idleInterval;  // normal idle
+    }
+
+    // Preserve minimum ledger open time
+    if (openTime < parms.ledgerMIN_CLOSE)
+    {
+        JLOG(j.debug()) << "Must wait minimum time before closing";
+        CLOG(clog) << "not closing because under ledgerMIN_CLOSE. ";
+        return false;
+    }
+
+    // Don't let this ledger close more than twice as fast as the previous
+    // ledger reached consensus so that slower validators can slow down
+    // the network
+    if (openTime < (prevRoundTime / 2))
+    {
+        JLOG(j.debug()) << "Ledger has not been open long enough";
+        CLOG(clog) << "not closing because not open long enough. ";
+        return false;
+    }
+
+    // Close the ledger
+    CLOG(clog) << "no reason to not close. ";
+    return true;
+}
