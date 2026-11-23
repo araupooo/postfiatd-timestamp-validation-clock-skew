@@ -1,0 +1,83 @@
+{
+ "checks": [
+  {
+   "check": "pinned checkout HEAD equals the pinned commit",
+   "detail": "HEAD=0085a1ff885d6a446369cf73a4430f75af22be55",
+   "id": "A-00",
+   "pass": true
+  },
+  {
+   "check": "43 rules: 37 VERIFIED anchors inside cited ranges (T-35 absence re-grepped 0 hits, T-34 dead copy re-grepped 0 refs), 3 SPECIFIED (2 external URLs + 1 in-tree doc), 1 MODELLED, 2 UNTESTABLE, none with a faked source",
+   "detail": "37/3/1/2",
+   "id": "A-01",
+   "pass": true
+  },
+  {
+   "check": "per-scenario arithmetic reconciles; totals 48 validators / 36 accepted / 5 stale_future / 4 stale_past / 3 stale_seen / 19 laggards / 19 stale proposals / close-time consensus 3 of 8 / canBeCurrent 8 pass / 2 fail",
+   "detail": "totals={'accepted': 36, 'can_be_current_fail': 2, 'can_be_current_pass': 8, 'close_time_consensus': 3, 'close_time_no_consensus': 5, 'laggards': 19, 'proposals_stale': 19, 'scenarios': 8, 'stale_future': 5, 'stale_past': 4, 'stale_seen': 3, 'validators_total': 48}",
+   "id": "B-01",
+   "pass": true
+  },
+  {
+   "check": "isCurrent() three-clause predicate present verbatim at Validations.h:162-165",
+   "detail": "grep-verified in Validations.h",
+   "id": "C-01",
+   "pass": true
+  },
+  {
+   "check": "WALL 5 min (Validations.h:56), FRESHNESS 20 s (:89), MAX_CONSENSUS 15 s (ConsensusParms.h:95-96), MIN_CLOSE 2 s (:99), avCT 75% (:160), roundCloseTime half step (LedgerTiming.h:141)",
+   "detail": "6 tokens at recorded lines",
+   "id": "D-01",
+   "pass": true
+  },
+  {
+   "check": "median-offset comment (RCLConsensus.cpp:722) and quarter-step damping '(by + 3s) / 4' (TimeKeeper.h:107)",
+   "detail": "both verified",
+   "id": "E-01",
+   "pass": true
+  },
+  {
+   "check": "matrix == results == scenarios (8); findings 12, claims 24 (16/2/4/2), risks 14, gaps 8; excerpts 52 across 21 files agree across manifest, files, hashes",
+   "detail": "all counts reconcile",
+   "id": "F-01",
+   "pass": true
+  },
+  {
+   "check": "determinism: simulator re-run reproduces byte-identical results and matrix (full SHA-256)",
+   "detail": "results shipped=a414f53a54f5b894d39092069acd83e5a9749d2a720898d5a2f22fa878386a36 rerun=a414f53a54f5b894d39092069acd83e5a9749d2a720898d5a2f22fa878386a36; matrix shipped=096549cd641d5abc2dad56688e9de4b2d4b88f538fefcc437b279d757df596c1 rerun=096549cd641d5abc2dad56688e9de4b2d4b88f538fefcc437b279d757df596c1",
+   "id": "G-01",
+   "pass": true
+  },
+  {
+   "check": "every excerpt digest matches source-hashes.json; every manifest blob SHA/size matches the checkout; run-manifest digests match shipped derived files",
+   "detail": "52 excerpt digests + blob SHAs verified",
+   "id": "H-01",
+   "pass": true
+  },
+  {
+   "check": "absence findings re-grepped: ledgerMAX_CLOSE 0 hits; validationVALID 0 refs outside its definition file; leap-second 0 hits; adjtime/clock_gettime/gettimeofday 0 hits",
+   "detail": "all absence claims hold (0 hits each)",
+   "id": "I-01",
+   "pass": true
+  },
+  {
+   "check": "67% quorum in code (ConsensusParms.h:79) and default close-time resolution is index 2 = 30 s (LedgerTiming.h:44); the 80% and 'usually 10 s' figures are doc statements, not code facts",
+   "detail": "both verified",
+   "id": "J-01",
+   "pass": true
+  },
+  {
+   "check": "timing sanity: total probe elapsed_ms is non-negative (loose band, never exact)",
+   "detail": "value not recorded; never compared",
+   "id": "T-01",
+   "pass": true
+  }
+ ],
+ "matrix_sha256": "096549cd641d5abc2dad56688e9de4b2d4b88f538fefcc437b279d757df596c1",
+ "pack": "Timestamp Validation and Clock-Skew Tolerance in postfiatd",
+ "passed": 12,
+ "pinned_commit": "0085a1ff885d6a446369cf73a4430f75af22be55",
+ "results_file": "outputs/derived/timestamp-results.json",
+ "results_sha256": "a414f53a54f5b894d39092069acd83e5a9749d2a720898d5a2f22fa878386a36",
+ "total": 12
+}

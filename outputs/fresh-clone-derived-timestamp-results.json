@@ -1,0 +1,636 @@
+{
+ "consensus": {
+  "avCT_CONSENSUS_PCT": 75,
+  "canBeCurrent_s": 300,
+  "ledgerABANDON_CONSENSUS_FACTOR": 10,
+  "ledgerABANDON_CONSENSUS_ms": 120000,
+  "ledgerIDLE_INTERVAL_s": 15,
+  "ledgerMAX_CONSENSUS_ms": 15000,
+  "ledgerMIN_CLOSE_s": 2,
+  "ledgerMIN_CONSENSUS_ms": 1950,
+  "minCONSENSUS_PCT": 67
+ },
+ "pack": "Timestamp Validation and Clock-Skew Tolerance in postfiatd",
+ "pinned_checkout_verified": true,
+ "pinned_commit": "0085a1ff885d6a446369cf73a4430f75af22be55",
+ "resolutions_s": [
+  10,
+  20,
+  30,
+  60,
+  90,
+  120
+ ],
+ "scenarios": [
+  {
+   "accepted": [
+    "V-A",
+    "V-B",
+    "V-C",
+    "V-D",
+    "V-F"
+   ],
+   "adjust_close_time": {
+    "measured_offset_s": 70,
+    "new_offset_s": 18,
+    "old_offset_s": 0
+   },
+   "can_be_current": [
+    {
+     "abs_diff_s": 0,
+     "parent_close_offset_s": 0,
+     "pass": true,
+     "within_5min": true
+    }
+   ],
+   "close_flags": 1,
+   "close_time_correct": false,
+   "close_time_votes": {
+    "10": 2,
+    "130": 1,
+    "190": 1,
+    "310": 1,
+    "40": 1,
+    "70": 1
+   },
+   "consensus_close_offset_s": null,
+   "eff_close_offset_s": -4,
+   "have_close_time_consensus": false,
+   "id": "S-01",
+   "laggards": [],
+   "median_offset_s": 70,
+   "next_resolution_s": 60,
+   "participants": 7,
+   "proposals_stale": [],
+   "receiver_now_offset_s": 0,
+   "resolution_s": 30,
+   "stale_future": [],
+   "stale_past": [],
+   "stale_seen": [
+    "V-E"
+   ],
+   "thresh_consensus": 5,
+   "thresh_vote": 3,
+   "title": "Clock ahead by seconds",
+   "validators_total": 6
+  },
+  {
+   "accepted": [
+    "V-A",
+    "V-B"
+   ],
+   "adjust_close_time": {
+    "measured_offset_s": -170,
+    "new_offset_s": -43,
+    "old_offset_s": 0
+   },
+   "can_be_current": [
+    {
+     "abs_diff_s": 0,
+     "parent_close_offset_s": 0,
+     "pass": true,
+     "within_5min": true
+    }
+   ],
+   "close_flags": 1,
+   "close_time_correct": false,
+   "close_time_votes": {
+    "-170": 3,
+    "-20": 1,
+    "-230": 1,
+    "-590": 1,
+    "10": 1
+   },
+   "consensus_close_offset_s": -170,
+   "eff_close_offset_s": -4,
+   "have_close_time_consensus": false,
+   "id": "S-02",
+   "laggards": [
+    "V-A",
+    "V-B",
+    "V-C",
+    "V-D",
+    "V-E",
+    "V-F"
+   ],
+   "median_offset_s": -170,
+   "next_resolution_s": 60,
+   "participants": 7,
+   "proposals_stale": [
+    "V-A",
+    "V-B",
+    "V-C",
+    "V-D",
+    "V-E",
+    "V-F"
+   ],
+   "receiver_now_offset_s": 0,
+   "resolution_s": 30,
+   "stale_future": [],
+   "stale_past": [
+    "V-C",
+    "V-D",
+    "V-E",
+    "V-F"
+   ],
+   "stale_seen": [],
+   "thresh_consensus": 5,
+   "thresh_vote": 3,
+   "title": "Clock behind by minutes",
+   "validators_total": 6
+  },
+  {
+   "accepted": [
+    "V-F"
+   ],
+   "adjust_close_time": {
+    "measured_offset_s": 310,
+    "new_offset_s": 78,
+    "old_offset_s": 0
+   },
+   "can_be_current": [
+    {
+     "abs_diff_s": 0,
+     "parent_close_offset_s": 0,
+     "pass": true,
+     "within_5min": true
+    }
+   ],
+   "close_flags": 1,
+   "close_time_correct": false,
+   "close_time_votes": {
+    "10": 2,
+    "190": 1,
+    "310": 2,
+    "430": 1,
+    "610": 1
+   },
+   "consensus_close_offset_s": null,
+   "eff_close_offset_s": -4,
+   "have_close_time_consensus": false,
+   "id": "S-03",
+   "laggards": [],
+   "median_offset_s": 310,
+   "next_resolution_s": 60,
+   "participants": 7,
+   "proposals_stale": [],
+   "receiver_now_offset_s": 0,
+   "resolution_s": 30,
+   "stale_future": [
+    "V-A",
+    "V-B",
+    "V-C",
+    "V-D"
+   ],
+   "stale_past": [],
+   "stale_seen": [
+    "V-E"
+   ],
+   "thresh_consensus": 5,
+   "thresh_vote": 3,
+   "title": "Clock ahead by minutes",
+   "validators_total": 6
+  },
+  {
+   "accepted": [
+    "V-A",
+    "V-B",
+    "V-C",
+    "V-D",
+    "V-E",
+    "V-F",
+    "V-G"
+   ],
+   "adjust_close_time": {
+    "measured_offset_s": -20,
+    "new_offset_s": -5,
+    "old_offset_s": 0
+   },
+   "can_be_current": [
+    {
+     "abs_diff_s": 30,
+     "parent_close_offset_s": -30,
+     "pass": true,
+     "within_5min": true
+    }
+   ],
+   "close_flags": 0,
+   "close_time_correct": true,
+   "close_time_votes": {
+    "-20": 6,
+    "10": 2
+   },
+   "consensus_close_offset_s": -20,
+   "eff_close_offset_s": -20,
+   "have_close_time_consensus": true,
+   "id": "S-04",
+   "laggards": [
+    "V-A",
+    "V-B",
+    "V-C",
+    "V-D",
+    "V-E",
+    "V-F"
+   ],
+   "median_offset_s": -20,
+   "next_resolution_s": 20,
+   "participants": 8,
+   "proposals_stale": [
+    "V-A",
+    "V-B",
+    "V-C",
+    "V-D",
+    "V-E",
+    "V-F"
+   ],
+   "receiver_now_offset_s": 0,
+   "resolution_s": 30,
+   "stale_future": [],
+   "stale_past": [],
+   "stale_seen": [],
+   "thresh_consensus": 6,
+   "thresh_vote": 4,
+   "title": "Close-time drift across a consensus round",
+   "validators_total": 7
+  },
+  {
+   "accepted": [
+    "V-A",
+    "V-B",
+    "V-D",
+    "V-E"
+   ],
+   "adjust_close_time": {
+    "measured_offset_s": -110,
+    "new_offset_s": -28,
+    "old_offset_s": 0
+   },
+   "can_be_current": [
+    {
+     "abs_diff_s": 0,
+     "parent_close_offset_s": 0,
+     "pass": true,
+     "within_5min": true
+    }
+   ],
+   "close_flags": 1,
+   "close_time_correct": false,
+   "close_time_votes": {
+    "-110": 1,
+    "-170": 2,
+    "10": 2,
+    "70": 1
+   },
+   "consensus_close_offset_s": null,
+   "eff_close_offset_s": -4,
+   "expiry_after_advance_s": {
+    "advance_s": 15,
+    "expired": [
+     "V-A",
+     "V-C",
+     "V-E"
+    ],
+    "failures": [
+     {
+      "failure": "stale_past",
+      "id": "V-A"
+     },
+     {
+      "failure": "stale_seen",
+      "id": "V-C"
+     },
+     {
+      "failure": "stale_past",
+      "id": "V-E"
+     }
+    ],
+    "modelled_note": "T-10 re-evaluated at now + advance_s; a validation signed 170 s in the past has 10 s of currency left at the start."
+   },
+   "have_close_time_consensus": false,
+   "id": "S-05",
+   "laggards": [
+    "V-A",
+    "V-B",
+    "V-E"
+   ],
+   "median_offset_s": -110,
+   "next_resolution_s": 60,
+   "participants": 6,
+   "proposals_stale": [
+    "V-A",
+    "V-B",
+    "V-E"
+   ],
+   "receiver_now_offset_s": 0,
+   "resolution_s": 30,
+   "stale_future": [],
+   "stale_past": [],
+   "stale_seen": [
+    "V-C"
+   ],
+   "thresh_consensus": 4,
+   "thresh_vote": 3,
+   "title": "Validation expiry under skew",
+   "validators_total": 5
+  },
+  {
+   "accepted": [
+    "V-A",
+    "V-B",
+    "V-C",
+    "V-D",
+    "V-E",
+    "V-F",
+    "V-G",
+    "V-H"
+   ],
+   "adjust_close_time": {
+    "measured_offset_s": 0,
+    "new_offset_s": 0,
+    "old_offset_s": 0
+   },
+   "can_be_current": [
+    {
+     "abs_diff_s": 240,
+     "parent_close_offset_s": -240,
+     "pass": true,
+     "within_5min": true
+    },
+    {
+     "abs_diff_s": 400,
+     "parent_close_offset_s": -400,
+     "pass": false,
+     "within_5min": false
+    }
+   ],
+   "close_flags": 1,
+   "close_time_correct": false,
+   "close_time_votes": {
+    "-50": 4,
+    "10": 1,
+    "70": 4
+   },
+   "consensus_close_offset_s": -50,
+   "eff_close_offset_s": -4,
+   "have_close_time_consensus": false,
+   "id": "S-06",
+   "laggards": [
+    "V-A",
+    "V-B",
+    "V-C",
+    "V-D"
+   ],
+   "median_offset_s": 0,
+   "next_resolution_s": 60,
+   "participants": 9,
+   "proposals_stale": [
+    "V-A",
+    "V-B",
+    "V-C",
+    "V-D"
+   ],
+   "receiver_now_offset_s": 0,
+   "resolution_s": 30,
+   "stale_future": [],
+   "stale_past": [],
+   "stale_seen": [],
+   "thresh_consensus": 7,
+   "thresh_vote": 4,
+   "title": "Ledger close-time disagreement and avalanche effects",
+   "validators_total": 8
+  },
+  {
+   "accepted": [
+    "V-A",
+    "V-B",
+    "V-C"
+   ],
+   "adjust_close_time": {
+    "measured_offset_s": 10,
+    "new_offset_s": 3,
+    "old_offset_s": 0
+   },
+   "can_be_current": [
+    {
+     "abs_diff_s": 0,
+     "parent_close_offset_s": 0,
+     "pass": true,
+     "within_5min": true
+    }
+   ],
+   "close_flags": 0,
+   "close_time_correct": true,
+   "close_time_votes": {
+    "10": 4
+   },
+   "consensus_close_offset_s": 10,
+   "drift_trace": {
+    "final_offset_s": -84,
+    "modelled_note": "T-04 quarter-step damping applied once per round to the measured median offset; T-36 bow-out evaluated against raw now(), not the adjusted close time.",
+    "rounds": [
+     {
+      "elapsed_s": 60,
+      "measured_offset_s": -12,
+      "new_offset_s": -3,
+      "old_offset_s": 0,
+      "round": 1,
+      "unl_expired": false
+     },
+     {
+      "elapsed_s": 120,
+      "measured_offset_s": -24,
+      "new_offset_s": -9,
+      "old_offset_s": -3,
+      "round": 2,
+      "unl_expired": false
+     },
+     {
+      "elapsed_s": 180,
+      "measured_offset_s": -36,
+      "new_offset_s": -18,
+      "old_offset_s": -9,
+      "round": 3,
+      "unl_expired": false
+     },
+     {
+      "elapsed_s": 240,
+      "measured_offset_s": -48,
+      "new_offset_s": -30,
+      "old_offset_s": -18,
+      "round": 4,
+      "unl_expired": false
+     },
+     {
+      "elapsed_s": 300,
+      "measured_offset_s": -60,
+      "new_offset_s": -45,
+      "old_offset_s": -30,
+      "round": 5,
+      "unl_expired": false
+     },
+     {
+      "elapsed_s": 360,
+      "measured_offset_s": -72,
+      "new_offset_s": -63,
+      "old_offset_s": -45,
+      "round": 6,
+      "unl_expired": true
+     },
+     {
+      "elapsed_s": 420,
+      "measured_offset_s": -84,
+      "new_offset_s": -84,
+      "old_offset_s": -63,
+      "round": 7,
+      "unl_expired": true
+     }
+    ]
+   },
+   "eff_close_offset_s": 10,
+   "have_close_time_consensus": true,
+   "id": "S-07",
+   "laggards": [],
+   "median_offset_s": 10,
+   "next_resolution_s": 30,
+   "participants": 4,
+   "proposals_stale": [],
+   "receiver_now_offset_s": 0,
+   "resolution_s": 30,
+   "stale_future": [],
+   "stale_past": [],
+   "stale_seen": [],
+   "thresh_consensus": 3,
+   "thresh_vote": 2,
+   "title": "NTP loss and free-running clocks",
+   "validators_total": 3
+  },
+  {
+   "accepted": [
+    "V-A",
+    "V-B",
+    "V-C",
+    "V-D",
+    "V-E",
+    "V-LEAP"
+   ],
+   "adjust_close_time": {
+    "measured_offset_s": 10,
+    "new_offset_s": 3,
+    "old_offset_s": 0
+   },
+   "can_be_current": [
+    {
+     "abs_diff_s": 400,
+     "parent_close_offset_s": -400,
+     "pass": false,
+     "within_5min": false
+    },
+    {
+     "abs_diff_s": 0,
+     "parent_close_offset_s": 0,
+     "pass": true,
+     "within_5min": true
+    }
+   ],
+   "close_flags": 0,
+   "close_time_correct": true,
+   "close_time_votes": {
+    "10": 7,
+    "3610": 1
+   },
+   "consensus_close_offset_s": 10,
+   "dst": {
+    "effect": "none",
+    "modelled_note": "No DST/timezone handling exists on the consensus path (absence finding 5, 0 grep hits in clock logic). All timestamps are UTC seconds since the Ripple epoch (T-01)."
+   },
+   "eff_close_offset_s": 10,
+   "have_close_time_consensus": true,
+   "id": "S-08",
+   "laggards": [],
+   "leap_second": {
+    "inside_dead_band": true,
+    "modelled_note": "No leap-second handling exists (absence finding 4, 0 grep hits). A 1 s step is inside the T-04 +/-1 s dead band, so the close offset decays by 3/4 instead of stepping; that last clause is inference, not code.",
+    "offset_after_step_s": 0,
+    "step_s": 1
+   },
+   "malicious_proposal": {
+    "id": "V-M",
+    "modelled_note": "No wall-clock bound drops a far-future proposal (absence finding 7): it is only rounded (T-22) and voted on (T-24). Its validation is stale_future, but the proposal itself still enters the vote.",
+    "proposed_close_offset_s": 3600,
+    "rounded_close_offset_s": 3610,
+    "validation_accepted": false,
+    "votes_for_its_bin": 1,
+    "won_vote": false
+   },
+   "median_offset_s": 10,
+   "next_resolution_s": 30,
+   "participants": 8,
+   "proposals_stale": [],
+   "receiver_now_offset_s": 0,
+   "rejoin": {
+    "can_be_current_after_pull": true,
+    "can_be_current_on_return": false,
+    "close_time_on_return_s": -400,
+    "final_offset_s": 275,
+    "modelled_note": "Quarter-step pull-back only (T-04/T-26): after four rounds a -400 s error is still not closed. The rejoining node's own validations are stale_past until its adjusted clock re-enters the T-10 window.",
+    "remaining_error_s": -125,
+    "returning_skew_s": -400,
+    "trace": [
+     {
+      "measured_offset_s": 400,
+      "new_offset_s": 100,
+      "old_offset_s": 0
+     },
+     {
+      "measured_offset_s": 300,
+      "new_offset_s": 175,
+      "old_offset_s": 100
+     },
+     {
+      "measured_offset_s": 225,
+      "new_offset_s": 232,
+      "old_offset_s": 175
+     },
+     {
+      "measured_offset_s": 169,
+      "new_offset_s": 275,
+      "old_offset_s": 232
+     }
+    ]
+   },
+   "resolution_s": 30,
+   "stale_future": [
+    "V-M"
+   ],
+   "stale_past": [],
+   "stale_seen": [],
+   "thresh_consensus": 6,
+   "thresh_vote": 4,
+   "title": "Leap-second and DST edge cases, malicious validator, rejoin after prolonged clock error",
+   "validators_total": 7
+  }
+ ],
+ "totals": {
+  "accepted": 36,
+  "can_be_current_fail": 2,
+  "can_be_current_pass": 8,
+  "close_time_consensus": 3,
+  "close_time_no_consensus": 5,
+  "laggards": 19,
+  "proposals_stale": 19,
+  "scenarios": 8,
+  "stale_future": 5,
+  "stale_past": 4,
+  "stale_seen": 3,
+  "validators_total": 48
+ },
+ "windows_s": {
+  "proposeFRESHNESS": 20,
+  "proposeINTERVAL": 12,
+  "validationCURRENT_EARLY": 180,
+  "validationCURRENT_LOCAL": 180,
+  "validationCURRENT_WALL": 300,
+  "validationFRESHNESS": 20,
+  "validationSET_EXPIRES": 600
+ }
+}
