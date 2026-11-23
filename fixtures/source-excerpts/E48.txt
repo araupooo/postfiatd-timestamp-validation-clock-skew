@@ -1,0 +1,14 @@
+# Source excerpt E48 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: include/xrpl/protocol/LedgerHeader.h, lines 82-87.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: 54404569099958333ba9f0c2b692fe783e7b3d13f2cad7fbec7dea90daaa0ff9
+# Source file git blob SHA: 0b35979971a1c5493875eaa478b6e2db1a0071bf
+# Source file size: 3290 bytes
+
+# --- include/xrpl/protocol/LedgerHeader.h lines 82-87 ---
+static std::uint32_t const sLCF_NoConsensusTime = 0x01;
+
+inline bool
+getCloseAgree(LedgerHeader const& info)
+{
+    return (info.closeFlags & sLCF_NoConsensusTime) == 0;

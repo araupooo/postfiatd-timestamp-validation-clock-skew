@@ -1,0 +1,13 @@
+# Source excerpt E51 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/LedgerTiming.h, lines 49-53.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: 371b38d96e1cee1662f6a585a6d75bd72e59d2329f9bdd34f66beb0ff3470031
+# Source file git blob SHA: 434f19b081886221689718818c6aae53f89a074b
+# Source file size: 6559 bytes
+
+# --- src/xrpld/consensus/LedgerTiming.h lines 49-53 ---
+//! How often we increase the close time resolution (in numbers of ledgers)
+auto constexpr increaseLedgerTimeResolutionEvery = 8;
+
+//! How often we decrease the close time resolution (in numbers of ledgers)
+auto constexpr decreaseLedgerTimeResolutionEvery = 1;

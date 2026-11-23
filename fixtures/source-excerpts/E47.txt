@@ -1,0 +1,14 @@
+# Source excerpt E47 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/ConsensusProposal.h, lines 159-164.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: 6bfc9dcb1d6c0247c84b8a8e0a107d8d9d2482e0de830c5eebf5b8a8e3c5d553
+# Source file git blob SHA: 6734d59205a5c2e6200f6b516f46c112b9ed76b5
+# Source file size: 8671 bytes
+
+# --- src/xrpld/consensus/ConsensusProposal.h lines 159-164 ---
+    //! Get whether this position is stale relative to the provided cutoff
+    bool
+    isStale(NetClock::time_point cutoff) const
+    {
+        return time_ <= cutoff;
+    }
