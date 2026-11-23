@@ -1,0 +1,12 @@
+{
+ "pack": "Timestamp Validation and Clock-Skew Tolerance in postfiatd",
+ "pinned_commit": "0085a1ff885d6a446369cf73a4430f75af22be55",
+ "scenario_count": 8,
+ "rule_count": 43,
+ "steps": {
+  "extract_excerpts": "pass",
+  "timestamp_model_config": "pass",
+  "simulator": "pass",
+  "probe": "pass"
+ }
+}
