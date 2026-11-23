@@ -1,0 +1,387 @@
+{
+ "base_time_note": "base_time is a fixed synthetic Ripple-epoch second (800000000); all validator skews are offsets from it. No wall-clock time is read by the simulator.",
+ "pack": "Timestamp Validation and Clock-Skew Tolerance in postfiatd",
+ "pinned_commit": "0085a1ff885d6a446369cf73a4430f75af22be55",
+ "scenarios": [
+  {
+   "base_time": 800000000,
+   "candidate_parent_close_offsets_s": [
+    0
+   ],
+   "id": "S-01",
+   "initial_close_offset_s": 0,
+   "ledger_seq": 100,
+   "prev_close_offset_s": -5,
+   "previous_agree": true,
+   "question": "Is a validator whose clock runs seconds fast still accepted, and how far ahead can it run before isCurrent() drops it as stale?",
+   "receiver_skew_s": 0,
+   "resolution_s": 30,
+   "title": "Clock ahead by seconds",
+   "validators": [
+    {
+     "id": "V-A",
+     "skew_s": 30
+    },
+    {
+     "id": "V-B",
+     "skew_s": 60
+    },
+    {
+     "id": "V-C",
+     "skew_s": 120
+    },
+    {
+     "id": "V-D",
+     "skew_s": 179
+    },
+    {
+     "id": "V-E",
+     "skew_s": 299
+    },
+    {
+     "id": "V-F",
+     "skew_s": 0
+    }
+   ]
+  },
+  {
+   "base_time": 800000000,
+   "candidate_parent_close_offsets_s": [
+    0
+   ],
+   "id": "S-02",
+   "initial_close_offset_s": 0,
+   "ledger_seq": 100,
+   "prev_close_offset_s": -5,
+   "previous_agree": true,
+   "question": "Where exactly does a slow clock stop being accepted -- at the -180 s CURRENT_EARLY edge, and what happens one second past it?",
+   "receiver_skew_s": 0,
+   "resolution_s": 30,
+   "title": "Clock behind by minutes",
+   "validators": [
+    {
+     "id": "V-A",
+     "skew_s": -30
+    },
+    {
+     "id": "V-B",
+     "skew_s": -179
+    },
+    {
+     "id": "V-C",
+     "skew_s": -180
+    },
+    {
+     "id": "V-D",
+     "skew_s": -181
+    },
+    {
+     "id": "V-E",
+     "skew_s": -240
+    },
+    {
+     "id": "V-F",
+     "skew_s": -600
+    }
+   ]
+  },
+  {
+   "base_time": 800000000,
+   "candidate_parent_close_offsets_s": [
+    0
+   ],
+   "id": "S-03",
+   "initial_close_offset_s": 0,
+   "ledger_seq": 100,
+   "prev_close_offset_s": -5,
+   "previous_agree": true,
+   "question": "Is a validator whose clock runs minutes fast dropped as stale, and is the +300 s CURRENT_WALL edge strict (signTime == now + 300 s)?",
+   "receiver_skew_s": 0,
+   "resolution_s": 30,
+   "title": "Clock ahead by minutes",
+   "validators": [
+    {
+     "id": "V-A",
+     "skew_s": 300
+    },
+    {
+     "id": "V-B",
+     "skew_s": 301
+    },
+    {
+     "id": "V-C",
+     "skew_s": 420
+    },
+    {
+     "id": "V-D",
+     "skew_s": 600
+    },
+    {
+     "id": "V-E",
+     "skew_s": 180
+    },
+    {
+     "id": "V-F",
+     "skew_s": 0
+    }
+   ]
+  },
+  {
+   "base_time": 800000000,
+   "candidate_parent_close_offsets_s": [
+    -30
+   ],
+   "id": "S-04",
+   "initial_close_offset_s": 0,
+   "ledger_seq": 104,
+   "prev_close_offset_s": -35,
+   "previous_agree": true,
+   "question": "When six of seven peers report a close time 30 s behind ours, does the rounded vote reach 75% close-time consensus, and how far does the median offset pull our adjusted clock in one round?",
+   "receiver_skew_s": 0,
+   "resolution_s": 30,
+   "title": "Close-time drift across a consensus round",
+   "validators": [
+    {
+     "id": "V-A",
+     "skew_s": -30
+    },
+    {
+     "id": "V-B",
+     "skew_s": -30
+    },
+    {
+     "id": "V-C",
+     "skew_s": -30
+    },
+    {
+     "id": "V-D",
+     "skew_s": -30
+    },
+    {
+     "id": "V-E",
+     "skew_s": -30
+    },
+    {
+     "id": "V-F",
+     "skew_s": -30
+    },
+    {
+     "id": "V-G",
+     "skew_s": 0
+    }
+   ]
+  },
+  {
+   "advance_s": 15,
+   "base_time": 800000000,
+   "candidate_parent_close_offsets_s": [
+    0
+   ],
+   "id": "S-05",
+   "initial_close_offset_s": 0,
+   "ledger_seq": 100,
+   "prev_close_offset_s": -5,
+   "previous_agree": true,
+   "question": "Does a validation signed 170 s in the past stay current, for how many more seconds, and which validators count as laggards (unseen for 20 s) right now?",
+   "receiver_skew_s": 0,
+   "resolution_s": 30,
+   "title": "Validation expiry under skew",
+   "validators": [
+    {
+     "id": "V-A",
+     "skew_s": -170
+    },
+    {
+     "id": "V-B",
+     "skew_s": -100
+    },
+    {
+     "id": "V-C",
+     "seen_offset_s": 200,
+     "skew_s": 0
+    },
+    {
+     "id": "V-D",
+     "seen_offset_s": 60,
+     "skew_s": 60
+    },
+    {
+     "id": "V-E",
+     "skew_s": -179
+    }
+   ]
+  },
+  {
+   "base_time": 800000000,
+   "candidate_parent_close_offsets_s": [
+    -240,
+    -400
+   ],
+   "id": "S-06",
+   "initial_close_offset_s": 0,
+   "ledger_seq": 100,
+   "prev_close_offset_s": -5,
+   "previous_agree": false,
+   "question": "When peers split evenly between two close-time bins, does close-time consensus fail, does the round fall back to prior close + 1 s with the NoConsensusTime flag, and does the resolution coarsen?",
+   "receiver_skew_s": 0,
+   "resolution_s": 30,
+   "title": "Ledger close-time disagreement and avalanche effects",
+   "validators": [
+    {
+     "id": "V-A",
+     "skew_s": -60
+    },
+    {
+     "id": "V-B",
+     "skew_s": -60
+    },
+    {
+     "id": "V-C",
+     "skew_s": -60
+    },
+    {
+     "id": "V-D",
+     "skew_s": -60
+    },
+    {
+     "id": "V-E",
+     "skew_s": 60
+    },
+    {
+     "id": "V-F",
+     "skew_s": 60
+    },
+    {
+     "id": "V-G",
+     "skew_s": 60
+    },
+    {
+     "id": "V-H",
+     "skew_s": 60
+    }
+   ]
+  },
+  {
+   "base_time": 800000000,
+   "candidate_parent_close_offsets_s": [
+    0
+   ],
+   "id": "S-07",
+   "initial_close_offset_s": 0,
+   "ledger_seq": 100,
+   "prev_close_offset_s": -5,
+   "previous_agree": true,
+   "question": "With no NTP and a wall clock drifting +12 s per round, how does the quarter-step median adjustment pull the adjusted clock back, and does the node bow out when its UNL expires?",
+   "receiver_skew_s": 0,
+   "resolution_s": 30,
+   "round_duration_s": 60,
+   "rounds": [
+    {
+     "measured_offset_s": -12,
+     "round": 1
+    },
+    {
+     "measured_offset_s": -24,
+     "round": 2
+    },
+    {
+     "measured_offset_s": -36,
+     "round": 3
+    },
+    {
+     "measured_offset_s": -48,
+     "round": 4
+    },
+    {
+     "measured_offset_s": -60,
+     "round": 5
+    },
+    {
+     "measured_offset_s": -72,
+     "round": 6
+    },
+    {
+     "measured_offset_s": -84,
+     "round": 7
+    }
+   ],
+   "title": "NTP loss and free-running clocks",
+   "unl_expires_at_offset_s": 300,
+   "validators": [
+    {
+     "id": "V-A",
+     "skew_s": 0
+    },
+    {
+     "id": "V-B",
+     "skew_s": 0
+    },
+    {
+     "id": "V-C",
+     "skew_s": 0
+    }
+   ]
+  },
+  {
+   "base_time": 800000000,
+   "candidate_parent_close_offsets_s": [
+    -400,
+    0
+   ],
+   "id": "S-08",
+   "initial_close_offset_s": 0,
+   "leap_step_s": 1,
+   "ledger_seq": 100,
+   "malicious": {
+    "id": "V-M",
+    "skew_s": 3600
+   },
+   "prev_close_offset_s": -5,
+   "previous_agree": true,
+   "question": "Does a 1 s leap-second step stay inside the adjustment dead band, does DST matter at all (UTC seconds), can a malicious validator's far-future close time win the vote, and how fast does a node returning with a -400 s clock error get pulled back?",
+   "receiver_skew_s": 0,
+   "rejoin": {
+    "measured_offsets_s": [
+     400,
+     300,
+     225,
+     169
+    ],
+    "returning_skew_s": -400
+   },
+   "resolution_s": 30,
+   "title": "Leap-second and DST edge cases, malicious validator, rejoin after prolonged clock error",
+   "validators": [
+    {
+     "id": "V-A",
+     "skew_s": 0
+    },
+    {
+     "id": "V-B",
+     "skew_s": 0
+    },
+    {
+     "id": "V-C",
+     "skew_s": 0
+    },
+    {
+     "id": "V-D",
+     "skew_s": 0
+    },
+    {
+     "id": "V-E",
+     "skew_s": 0
+    },
+    {
+     "id": "V-LEAP",
+     "skew_s": 1
+    },
+    {
+     "id": "V-M",
+     "skew_s": 3600
+    }
+   ]
+  }
+ ],
+ "schema_version": 1
+}

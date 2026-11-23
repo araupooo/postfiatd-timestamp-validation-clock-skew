@@ -1,0 +1,687 @@
+{
+ "note": "Rules T-01..T-37 VERIFIED against the pinned checkout (grep-verified line ranges; every rule carries the anchor of its linked excerpt, which sits inside the cited range). T-38/T-39 SPECIFIED from xrpl.org protocol docs (URL + section). T-40 SPECIFIED from the in-tree design doc docs/consensus.md (not code). T-41 MODELLED from T-10/T-17/T-26. T-42/T-43 UNTESTABLE from source alone. Where xrpl.org docs disagree with the code (close-time rounding 'usually 10 s' vs 30 s default; 80% vs 67%), this pack follows the code. There is no ledgerMAX_CLOSE (T-35, 0 hits); the ConsensusParms validation windows are dead copies (T-34, 0 references).",
+ "pack": "Timestamp Validation and Clock-Skew Tolerance in postfiatd",
+ "pinned_commit": "0085a1ff885d6a446369cf73a4430f75af22be55",
+ "rules": [
+  {
+   "external": null,
+   "id": "T-01",
+   "note": null,
+   "primary_source": "`include/xrpl/basics/chrono.h:45-72` (E01)",
+   "source": {
+    "anchor": "class NetClock",
+    "end_line": 72,
+    "excerpt": "E01",
+    "file": "include/xrpl/basics/chrono.h",
+    "start_line": 45
+   },
+   "statement": "NetClock counts whole seconds since 2000-01-01T00:00:00Z (epoch_offset = 946684800 s), with is_steady = false.",
+   "status": "VERIFIED",
+   "title": "Network time uses the Ripple epoch (2000-01-01), uint32 seconds, non-steady clock"
+  },
+  {
+   "external": null,
+   "id": "T-02",
+   "note": null,
+   "primary_source": "`src/xrpld/core/TimeKeeper.h:36-67` (E02)",
+   "source": {
+    "anchor": "std::chrono::system_clock::now()",
+    "end_line": 67,
+    "excerpt": "E02",
+    "file": "src/xrpld/core/TimeKeeper.h",
+    "start_line": 36
+   },
+   "statement": "TimeKeeper::now() returns system_clock::now() minus epoch_offset; there is no other wall-clock source in the node.",
+   "status": "VERIFIED",
+   "title": "The wall clock is read from std::chrono::system_clock, adjusted to the Ripple epoch"
+  },
+  {
+   "external": null,
+   "id": "T-03",
+   "note": null,
+   "primary_source": "`src/xrpld/core/TimeKeeper.h:69-86` (E03)",
+   "source": {
+    "anchor": "closeTime() const",
+    "end_line": 86,
+    "excerpt": "E03",
+    "file": "src/xrpld/core/TimeKeeper.h",
+    "start_line": 69
+   },
+   "statement": "The network adjusted time used by consensus is now() + closeOffset_, where closeOffset_ is learned from peers (see T-26), not measured locally.",
+   "status": "VERIFIED",
+   "title": "closeTime() is local wall time plus a network-learned offset"
+  },
+  {
+   "external": null,
+   "id": "T-04",
+   "note": null,
+   "primary_source": "`src/xrpld/core/TimeKeeper.h:88-116` (E04)",
+   "source": {
+    "anchor": "adjustCloseTime",
+    "end_line": 116,
+    "excerpt": "E04",
+    "file": "src/xrpld/core/TimeKeeper.h",
+    "start_line": 88
+   },
+   "statement": "adjustCloseTime(by) moves the offset by (by +/- 3s)/4 for offsets over 1 s in magnitude, and decays the offset by 3/4 when the measured offset is within +/-1 s; small offsets are ignored.",
+   "status": "VERIFIED",
+   "title": "Close-offset adjustments are damped to one quarter of the measured offset"
+  },
+  {
+   "external": null,
+   "id": "T-05",
+   "note": "The doc comment says 'after its ledger's close time', but the enforced predicate (T-10) compares the validation's signing time against local now, not against any ledger close time. See D-05.",
+   "primary_source": "`src/xrpld/consensus/Validations.h:40-56` (E05)",
+   "source": {
+    "anchor": "validationCURRENT_WALL",
+    "end_line": 56,
+    "excerpt": "E05",
+    "file": "src/xrpld/consensus/Validations.h",
+    "start_line": 40
+   },
+   "statement": "validationCURRENT_WALL = 5 minutes.",
+   "status": "VERIFIED",
+   "title": "A validation stays current for 5 minutes of wall time after signing"
+  },
+  {
+   "external": null,
+   "id": "T-06",
+   "note": null,
+   "primary_source": "`src/xrpld/consensus/Validations.h:58-64` (E06)",
+   "source": {
+    "anchor": "validationCURRENT_LOCAL",
+    "end_line": 64,
+    "excerpt": "E06",
+    "file": "src/xrpld/consensus/Validations.h",
+    "start_line": 58
+   },
+   "statement": "validationCURRENT_LOCAL = 3 minutes.",
+   "status": "VERIFIED",
+   "title": "A validation stays current for 3 minutes after first being seen locally"
+  },
+  {
+   "external": null,
+   "id": "T-07",
+   "note": null,
+   "primary_source": "`src/xrpld/consensus/Validations.h:66-71` (E07)",
+   "source": {
+    "anchor": "validationCURRENT_EARLY",
+    "end_line": 71,
+    "excerpt": "E07",
+    "file": "src/xrpld/consensus/Validations.h",
+    "start_line": 66
+   },
+   "statement": "validationCURRENT_EARLY = 3 minutes; a validation whose signing time is up to 3 minutes in the local future is still accepted.",
+   "status": "VERIFIED",
+   "title": "A validation is acceptable up to 3 minutes before its signing time"
+  },
+  {
+   "external": null,
+   "id": "T-08",
+   "note": null,
+   "primary_source": "`src/xrpld/consensus/Validations.h:73-79` (E08)",
+   "source": {
+    "anchor": "validationSET_EXPIRES",
+    "end_line": 79,
+    "excerpt": "E08",
+    "file": "src/xrpld/consensus/Validations.h",
+    "start_line": 73
+   },
+   "statement": "validationSET_EXPIRES = 10 minutes; sets of validations for a given ledger hash (and per-sequence entries) are swept after this.",
+   "status": "VERIFIED",
+   "title": "Validation sets expire after 10 minutes"
+  },
+  {
+   "external": null,
+   "id": "T-09",
+   "note": null,
+   "primary_source": "`src/xrpld/consensus/Validations.h:81-89` (E09)",
+   "source": {
+    "anchor": "validationFRESHNESS",
+    "end_line": 89,
+    "excerpt": "E09",
+    "file": "src/xrpld/consensus/Validations.h",
+    "start_line": 81
+   },
+   "statement": "validationFRESHNESS = 20 seconds; the comment requires it to be 'sufficiently higher than ledgerMAX_CONSENSUS' (15 s, T-28) so validators merely waiting for laggards are not treated as offline.",
+   "status": "VERIFIED",
+   "title": "A validation counts as 'fresh' (live proposer) for 20 seconds after being seen"
+  },
+  {
+   "external": null,
+   "id": "T-10",
+   "note": "Boundary tests: src/test/consensus/Validations_test.cpp:364-374 exercises the exact CURRENT_EARLY / CURRENT_WALL / CURRENT_LOCAL boundaries.",
+   "primary_source": "`src/xrpld/consensus/Validations.h:137-166` (E10)",
+   "source": {
+    "anchor": "isCurrent(",
+    "end_line": 166,
+    "excerpt": "E10",
+    "file": "src/xrpld/consensus/Validations.h",
+    "start_line": 137
+   },
+   "statement": "A validation is current iff signTime > now - CURRENT_EARLY AND signTime < now + CURRENT_WALL AND (seenTime is zero OR seenTime < now + CURRENT_LOCAL). Arithmetic is overflow-safe (unsigned 32-bit promoted to signed 64-bit).",
+   "status": "VERIFIED",
+   "title": "isCurrent(): the exact three-clause acceptance window for a validation"
+  },
+  {
+   "external": null,
+   "id": "T-11",
+   "note": null,
+   "primary_source": "`src/xrpld/consensus/Validations.h:615-627` (E11)",
+   "source": {
+    "anchor": "ValStatus::stale",
+    "end_line": 627,
+    "excerpt": "E11",
+    "file": "src/xrpld/consensus/Validations.h",
+    "start_line": 615
+   },
+   "statement": "The first thing add() does is the isCurrent() test against adaptor_.now(); failure returns ValStatus::stale and the validation is never stored, never enters the trie, and never reaches the sequence-enforcer / Byzantine checks.",
+   "status": "VERIFIED",
+   "title": "Validations::add() rejects a non-current validation as stale before any other check"
+  },
+  {
+   "external": null,
+   "id": "T-12",
+   "note": null,
+   "primary_source": "`src/xrpld/overlay/detail/PeerImp.cpp:2446-2487` (E12)",
+   "source": {
+    "anchor": "setSeen(closeTime)",
+    "end_line": 2487,
+    "excerpt": "E12",
+    "file": "src/xrpld/overlay/detail/PeerImp.cpp",
+    "start_line": 2446
+   },
+   "statement": "PeerImp stamps the validation's seen time with the local network-adjusted closeTime(), then runs isCurrent() against closeTime(); a non-current validation is dropped with fee feeUselessData ('not current') before any trust check or signature verification.",
+   "status": "VERIFIED",
+   "title": "On receipt from a peer, currency is checked before signature verification"
+  },
+  {
+   "external": null,
+   "id": "T-13",
+   "note": null,
+   "primary_source": "`src/xrpld/consensus/Validations.h:483-491,509-533` (E13, E49)",
+   "source": {
+    "anchor": "isCurrent(",
+    "end_line": 533,
+    "excerpt": "E13",
+    "file": "src/xrpld/consensus/Validations.h",
+    "start_line": 509
+   },
+   "statement": "Validations::current() re-checks isCurrent() for each stored validation on every call and erases + removes from the trie any that fail; withTrie() calls current() first for the same reason.",
+   "status": "VERIFIED",
+   "title": "Every read of current validations flushes stale ones from the trie"
+  },
+  {
+   "external": null,
+   "id": "T-14",
+   "note": null,
+   "primary_source": "`src/xrpld/consensus/Validations.h:729-775` (E14)",
+   "source": {
+    "anchor": "expire(beast::Journal& j)",
+    "end_line": 775,
+    "excerpt": "E14",
+    "file": "src/xrpld/consensus/Validations.h",
+    "start_line": 729
+   },
+   "statement": "expire() calls beast::expire(byLedger_, SET_EXPIRES) and beast::expire(bySequence_, SET_EXPIRES) (10 min of disuse); the keep-range [low, high) is refreshed at SET_EXPIRES - FRESHNESS (10 min - 20 s) before it would expire.",
+   "status": "VERIFIED",
+   "title": "expire() sweeps validation sets older than validationSET_EXPIRES"
+  },
+  {
+   "external": null,
+   "id": "T-15",
+   "note": null,
+   "primary_source": "`src/xrpld/consensus/Validations.h:98-128` (E15)",
+   "source": {
+    "anchor": "SeqEnforcer",
+    "end_line": 128,
+    "excerpt": "E15",
+    "file": "src/xrpld/consensus/Validations.h",
+    "start_line": 98
+   },
+   "statement": "SeqEnforcer rejects a validation whose sequence is not greater than the largest unexpired sequence from that validator; the tracked maximum resets to 0 once now > when_ + validationSET_EXPIRES. Note: this enforcer's clock is std::chrono::steady_clock (monotonic), unlike the wall-clock NetClock used for isCurrent().",
+   "status": "VERIFIED",
+   "title": "Validation sequence numbers must increase monotonically, with a 10-minute reset"
+  },
+  {
+   "external": null,
+   "id": "T-16",
+   "note": null,
+   "primary_source": "`src/xrpld/consensus/Validations.h:1127-1147` (E16)",
+   "source": {
+    "anchor": "laggards(",
+    "end_line": 1147,
+    "excerpt": "E16",
+    "file": "src/xrpld/consensus/Validations.h",
+    "start_line": 1127
+   },
+   "statement": "Validations::laggards() treats a trusted proposer as live only while adaptor_.now() < v.seenTime() + validationFRESHNESS (20 s); proposers outside that window are removed from the trusted set for the pause evaluation, i.e. counted as offline.",
+   "status": "VERIFIED",
+   "title": "A proposer is 'offline' if its last validation was seen more than 20 s ago"
+  },
+  {
+   "external": null,
+   "id": "T-17",
+   "note": null,
+   "primary_source": "`src/xrpld/app/consensus/RCLValidations.cpp:117-126` (E17)",
+   "source": {
+    "anchor": "RCLValidationsAdaptor::now()",
+    "end_line": 126,
+    "excerpt": "E17",
+    "file": "src/xrpld/app/consensus/RCLValidations.cpp",
+    "start_line": 117
+   },
+   "statement": "RCLValidationsAdaptor::now() returns app_.timeKeeper().closeTime() -- i.e. wall time plus the peer-learned offset (T-03/T-04) -- so a node whose wall clock is off judges validation currency against its adjusted clock.",
+   "status": "VERIFIED",
+   "title": "The 'now' used for all validation currency checks is the network-adjusted close time, not raw wall time"
+  },
+  {
+   "external": null,
+   "id": "T-18",
+   "note": null,
+   "primary_source": "`src/xrpld/app/consensus/RCLConsensus.cpp:813-824` (E18)",
+   "source": {
+    "anchor": "validationTime",
+    "end_line": 824,
+    "excerpt": "E18",
+    "file": "src/xrpld/app/consensus/RCLConsensus.cpp",
+    "start_line": 813
+   },
+   "statement": "Adaptor::validate() sets validationTime = timeKeeper().closeTime(), and if that is not greater than the last validation time it bumps it to lastValidationTime_ + 1s, so two validations from one node never share a signing time even if the clock steps backwards.",
+   "status": "VERIFIED",
+   "title": "A validator's own signing time is its adjusted close time, forced strictly increasing by 1 s"
+  },
+  {
+   "external": null,
+   "id": "T-19",
+   "note": null,
+   "primary_source": "`include/xrpl/protocol/STValidation.h:231-253` (E19); `src/libxrpl/protocol/STValidation.cpp:111-119` (E20)",
+   "source": {
+    "anchor": "seenTime_(signTime)",
+    "end_line": 253,
+    "excerpt": "E19",
+    "file": "include/xrpl/protocol/STValidation.h",
+    "start_line": 231
+   },
+   "statement": "The signing constructor writes sfSigningTime = signTime.time_since_epoch().count() and initialises seenTime_ = signTime; getSignTime() reconstructs a NetClock time point from the sfSigningTime U32 field. A locally created validation therefore starts life with seenTime == signTime.",
+   "status": "VERIFIED",
+   "title": "The signing time is stored as sfSigningTime (seconds since Ripple epoch) and the seen time starts equal to it"
+  },
+  {
+   "external": null,
+   "id": "T-20",
+   "note": null,
+   "primary_source": "`src/xrpld/consensus/LedgerTiming.h:35-47` (E21)",
+   "source": {
+    "anchor": "ledgerPossibleTimeResolutions",
+    "end_line": 47,
+    "excerpt": "E21",
+    "file": "src/xrpld/consensus/LedgerTiming.h",
+    "start_line": 35
+   },
+   "statement": "ledgerPossibleTimeResolutions = {10, 20, 30, 60, 90, 120} s; ledgerDefaultTimeResolution = 30 s (index 2); ledgerGenesisTimeResolution = 10 s (index 0).",
+   "status": "VERIFIED",
+   "title": "Close-time resolutions are 10/20/30/60/90/120 s; default 30 s, genesis 10 s"
+  },
+  {
+   "external": null,
+   "id": "T-21",
+   "note": null,
+   "primary_source": "`src/xrpld/consensus/LedgerTiming.h:49-53,78-122` (E22, E51)",
+   "source": {
+    "anchor": "getNextLedgerTimeResolution",
+    "end_line": 122,
+    "excerpt": "E22",
+    "file": "src/xrpld/consensus/LedgerTiming.h",
+    "start_line": 78
+   },
+   "statement": "getNextLedgerTimeResolution() steps to the next coarser bin whenever the previous round did not agree on close time (checked every ledger), and steps to the next finer bin when it did agree (checked every 8 ledgers).",
+   "status": "VERIFIED",
+   "title": "The close-time resolution adapts: coarser after a missed agreement, finer after agreement"
+  },
+  {
+   "external": null,
+   "id": "T-22",
+   "note": null,
+   "primary_source": "`src/xrpld/consensus/LedgerTiming.h:124-143` (E23)",
+   "source": {
+    "anchor": "roundCloseTime",
+    "end_line": 143,
+    "excerpt": "E23",
+    "file": "src/xrpld/consensus/LedgerTiming.h",
+    "start_line": 124
+   },
+   "statement": "roundCloseTime() adds half the resolution then truncates to a multiple of the resolution; a zero time point is returned unchanged.",
+   "status": "VERIFIED",
+   "title": "A raw close time is rounded to the nearest multiple of the resolution (half rounds up)"
+  },
+  {
+   "external": null,
+   "id": "T-23",
+   "note": null,
+   "primary_source": "`src/xrpld/consensus/LedgerTiming.h:154-169` (E24)",
+   "source": {
+    "anchor": "effCloseTime",
+    "end_line": 169,
+    "excerpt": "E24",
+    "file": "src/xrpld/consensus/LedgerTiming.h",
+    "start_line": 154
+   },
+   "statement": "effCloseTime() returns max(roundCloseTime(closeTime, resolution), priorCloseTime + 1s), so ledger close times are strictly increasing by at least one second regardless of clock skew.",
+   "status": "VERIFIED",
+   "title": "The effective close time is never earlier than the prior close time + 1 s"
+  },
+  {
+   "external": null,
+   "id": "T-24",
+   "note": "Tie-break (same range, lines 1606-1611): votes are walked highest-time first 'so that, among close times tied for the most votes, the earliest wins. The smaller value is the safer choice.'",
+   "primary_source": "`src/xrpld/consensus/Consensus.h:1507-1641` (E25); `src/xrpld/consensus/ConsensusParms.h:159-160` (avCT_CONSENSUS_PCT = 75, E50)",
+   "source": {
+    "anchor": "closeTimeVotes",
+    "end_line": 1641,
+    "excerpt": "E25",
+    "file": "src/xrpld/consensus/Consensus.h",
+    "start_line": 1507
+   },
+   "statement": "In updateOurPositions(), each peer proposal's close time is rounded via asCloseTime() (= roundCloseTime at the current resolution) and tallied in closeTimeVotes; a time bin needs participantsNeeded(participants, neededWeight) votes to be adopted and participantsNeeded(participants, avCT_CONSENSUS_PCT = 75%) votes to set haveCloseTimeConsensus_. With no peers, close-time consensus is trivially true with our own rounded time. The avalanche state for close time advances with the same thresholds as transaction disputes.",
+   "status": "VERIFIED",
+   "title": "Close-time consensus: rounded peer close times are voted on; 75% declares agreement"
+  },
+  {
+   "external": null,
+   "id": "T-25",
+   "note": null,
+   "primary_source": "`src/xrpld/app/consensus/RCLConsensus.cpp:491-506` (E26); `src/xrpld/app/ledger/Ledger.cpp:377-389` (E45); `include/xrpl/protocol/LedgerHeader.h:82-87` (E48)",
+   "source": {
+    "anchor": "prevLedger.closeTime() + 1s",
+    "end_line": 506,
+    "excerpt": "E26",
+    "file": "src/xrpld/app/consensus/RCLConsensus.cpp",
+    "start_line": 491
+   },
+   "statement": "phaseEstablish() returns early if haveCloseTimeConsensus_ is false ('We have TX consensus but not CT consensus'). If consensus is nevertheless accepted with a zero close time (agree-to-disagree), doAccept() substitutes prevLedger.closeTime() + 1s, sets closeTimeCorrect = false, and the built ledger records closeFlags = sLCF_NoConsensusTime (0x01).",
+   "status": "VERIFIED",
+   "title": "Without close-time consensus the round does not accept; the fallback close time is prior close + 1 s and is flagged"
+  },
+  {
+   "external": null,
+   "id": "T-26",
+   "note": null,
+   "primary_source": "`src/xrpld/app/consensus/RCLConsensus.cpp:704-728` (E27); `src/xrpld/consensus/ConsensusTypes.h:191-260` (E46)",
+   "source": {
+    "anchor": "medianCloseOffset(rawCloseTimes)",
+    "end_line": 728,
+    "excerpt": "E27",
+    "file": "src/xrpld/app/consensus/RCLConsensus.cpp",
+    "start_line": 704
+   },
+   "statement": "After doAccept(), medianCloseOffset(rawCloseTimes) computes the lower weighted median of the peers' reported close times minus our own (self weight 1, each peer bin weighted by its vote count), and timeKeeper().adjustCloseTime(offset) applies it with the quarter-step damping of T-04. A median resists a minority of far-off reporters; a mean would not.",
+   "status": "VERIFIED",
+   "title": "Each accepted round re-centres the local clock on the weighted median of peer close times"
+  },
+  {
+   "external": null,
+   "id": "T-27",
+   "note": null,
+   "primary_source": "`src/xrpld/consensus/Consensus.cpp:26-103` (E28); `src/xrpld/consensus/ConsensusParms.h:81-83` (E52)",
+   "source": {
+    "anchor": "ledgerMIN_CLOSE",
+    "end_line": 103,
+    "excerpt": "E28",
+    "file": "src/xrpld/consensus/Consensus.cpp",
+    "start_line": 26
+   },
+   "statement": "shouldCloseLedger() refuses to close while openTime < ledgerMIN_CLOSE (2 s); also refuses while openTime < prevRoundTime / 2; closes immediately if more than half the previous proposers have already closed/validated, or if the round looks anomalous (prevRoundTime < -1 s, > 10 min, or timeSincePrevClose > 10 min); with no transactions it closes only at the idle interval max(ledgerIDLE_INTERVAL = 15 s, 2 x previous close-time resolution).",
+   "status": "VERIFIED",
+   "title": "A ledger does not close until it has been open at least 2 s (and other gates)"
+  },
+  {
+   "external": null,
+   "id": "T-28",
+   "note": null,
+   "primary_source": "`src/xrpld/consensus/Consensus.cpp:176-270` (E29); `src/xrpld/consensus/ConsensusParms.h:78-114` (E39)",
+   "source": {
+    "anchor": "checkConsensus(",
+    "end_line": 270,
+    "excerpt": "E29",
+    "file": "src/xrpld/consensus/Consensus.cpp",
+    "start_line": 176
+   },
+   "statement": "checkConsensus() returns No while currentAgreeTime <= ledgerMIN_CONSENSUS (1950 ms); if fewer than 3/4 of the previous proposers are present it waits until currentAgreeTime >= previousAgreeTime + ledgerMIN_CONSENSUS; consensus is declared at minCONSENSUS_PCT = 67% once currentAgreeTime > ledgerMAX_CONSENSUS (15 s) has passed (via checkConsensusReached); a MovedOn outcome is declared if 67% of proposers have already validated the next ledger; the round is abandoned (Expired) when currentAgreeTime > clamp(previousAgreeTime x ledgerABANDON_CONSENSUS_FACTOR (10), ledgerMAX_CONSENSUS, ledgerABANDON_CONSENSUS (120 s)).",
+   "status": "VERIFIED",
+   "title": "Consensus declaration: minimum 1.95 s, maximum 15 s, 67% agreement, abandon at 10x/120 s"
+  },
+  {
+   "external": null,
+   "id": "T-29",
+   "note": null,
+   "primary_source": "`src/xrpld/consensus/ConsensusParms.h:134-157` (E30); `src/xrpld/consensus/DisputedTx.h:85-149` (E40)",
+   "source": {
+    "anchor": "avalancheCutoffs",
+    "end_line": 157,
+    "excerpt": "E30",
+    "file": "src/xrpld/consensus/ConsensusParms.h",
+    "start_line": 134
+   },
+   "statement": "Avalanche cutoffs: init {0% of prior round, 50% yes}, mid {50%, 65%}, late {85%, 70%}, stuck {200%, 95%} (stuck loops to itself); avMIN_CONSENSUS_TIME = 5 s guarantees a round at each threshold even after a very fast previous round; avMIN_ROUNDS = 2, avSTALLED_ROUNDS = 4. A disputed transaction counts as stalled only when the avalanche state machine is at its final state, it has held its vote for >= avMIN_ROUNDS, peers have not changed votes for >= avSTALLED_ROUNDS, and support is > 67% or < 33% -- and a stalled round can still declare consensus (T-28) without full agreement.",
+   "status": "VERIFIED",
+   "title": "Avalanche thresholds rise with round time; a dispute is 'stalled' only after 4 unchanged rounds"
+  },
+  {
+   "external": null,
+   "id": "T-30",
+   "note": null,
+   "primary_source": "`src/xrpld/consensus/ConsensusParms.h:68-72` (E41); `src/xrpld/consensus/Consensus.h:1501-1529` (E31); `src/xrpld/consensus/ConsensusProposal.h:159-164` (E47)",
+   "source": {
+    "anchor": "isStale(peerCutoff)",
+    "end_line": 1529,
+    "excerpt": "E31",
+    "file": "src/xrpld/consensus/Consensus.h",
+    "start_line": 1501
+   },
+   "statement": "proposeFRESHNESS = 20 s, proposeINTERVAL = 12 s. In updateOurPositions(), peer proposals with seenTime <= now - proposeFRESHNESS are removed (and their dispute votes un-voted); our own position is re-shared when its close time changed or it is older than proposeINTERVAL.",
+   "status": "VERIFIED",
+   "title": "Proposals go stale after 20 s; our own position is refreshed every 12 s"
+  },
+  {
+   "external": null,
+   "id": "T-31",
+   "note": null,
+   "primary_source": "`src/xrpld/app/misc/NetworkOPs.cpp:1095-1103` (E32); `src/xrpld/consensus/Consensus.h:337-348` (E42); `src/xrpld/consensus/ConsensusParms.h:101-102` (E43)",
+   "source": {
+    "anchor": "timerEntry(app_.timeKeeper().closeTime()",
+    "end_line": 1103,
+    "excerpt": "E32",
+    "file": "src/xrpld/app/misc/NetworkOPs.cpp",
+    "start_line": 1095
+   },
+   "statement": "NetworkOPs calls mConsensus.timerEntry(app_.timeKeeper().closeTime(), ...) on every heartbeat (interval ledgerGRANULARITY = 1 s), and startRound() is likewise fed timeKeeper().closeTime(). Inside Consensus, timerEntry stores that value as now_ and drives all close-time logic from it, while round durations (openTime_, roundTime) are measured on clock_type = beast::abstract_clock<std::chrono::steady_clock> -- a monotonic clock immune to wall-clock steps.",
+   "status": "VERIFIED",
+   "title": "Consensus is driven by a 1 s heartbeat carrying the network-adjusted time; internal progress uses a monotonic clock"
+  },
+  {
+   "external": null,
+   "id": "T-32",
+   "note": null,
+   "primary_source": "`src/xrpld/consensus/Consensus.h:1433-1447` (E33); `src/xrpld/app/consensus/RCLConsensus.cpp` (onClose, same close time)",
+   "source": {
+    "anchor": "rawCloseTimes_.self = now_;",
+    "end_line": 1447,
+    "excerpt": "E33",
+    "file": "src/xrpld/consensus/Consensus.h",
+    "start_line": 1433
+   },
+   "statement": "Consensus::closeLedger() records rawCloseTimes_.self = now_ (the network-adjusted time of the timerEntry that closed the ledger) and Adaptor::onClose() builds the initial proposal with close time closeTime (that same now_) and seen time app_.timeKeeper().closeTime().",
+   "status": "VERIFIED",
+   "title": "A node's own close-time proposal is its adjusted clock at the moment it closes"
+  },
+  {
+   "external": null,
+   "id": "T-33",
+   "note": null,
+   "primary_source": "`src/xrpld/app/ledger/detail/LedgerMaster.cpp:364-398` (E34); `src/xrpld/app/ledger/LedgerMaster.h:116-121` (E44)",
+   "source": {
+    "anchor": "5min",
+    "end_line": 398,
+    "excerpt": "E34",
+    "file": "src/xrpld/app/ledger/detail/LedgerMaster.cpp",
+    "start_line": 364
+   },
+   "statement": "LedgerMaster::canBeCurrent() returns false when |closeTime - ledger.parentCloseTime| > 5 min (checked when a validated ledger exists or the candidate's seq > 10, to tolerate clock error at startup); it also caps the candidate sequence at validSeq + 10 + (closeTime - validParentCloseTime)/2 (one ledger per 2 s) to stop a malicious ledger inflating the sequence.",
+   "status": "VERIFIED",
+   "title": "A candidate ledger is rejected as 'current' if its parent close time is more than 5 minutes from our clock"
+  },
+  {
+   "absence": {
+    "command": "grep -rn \"validationVALID\" src/ include/",
+    "hits_outside_definition_file": 0,
+    "note": "excluding the definition file src/xrpld/consensus/ConsensusParms.h; includes src/test/"
+   },
+   "external": null,
+   "id": "T-34",
+   "note": "Absence check: grep -rn 'validationVALID' src/ include/ excluding the definition file returned 0 hits, including src/test/.",
+   "primary_source": "`src/xrpld/consensus/ConsensusParms.h:45-66` (E35)",
+   "source": {
+    "anchor": "validationVALID_WALL",
+    "end_line": 66,
+    "excerpt": "E35",
+    "file": "src/xrpld/consensus/ConsensusParms.h",
+    "start_line": 45
+   },
+   "statement": "ConsensusParms defines validationVALID_WALL (5 min), validationVALID_LOCAL (3 min) and validationVALID_EARLY (3 min) with the same values as ValidationParms, but a tree-wide search finds zero references to any of them outside their definitions -- they are never read. The live parameters are the ValidationParms ones (T-05--T-07). This is a latent trap for anyone citing ConsensusParms as the source of the windows.",
+   "status": "VERIFIED",
+   "title": "ConsensusParms carries a second, DEAD copy of the validation windows"
+  },
+  {
+   "absence": {
+    "command": "grep -rn \"ledgerMAX_CLOSE\" src/ include/ docs/",
+    "hits": 0,
+    "run_from": "pinned checkout root"
+   },
+   "external": null,
+   "id": "T-35",
+   "note": "Absence finding: command 'grep -rn \"ledgerMAX_CLOSE\" src/ include/ docs/' run from the pinned checkout root returned 0 hits. Nearest constants at src/xrpld/consensus/ConsensusParms.h:95-96,113-114 (E39).",
+   "primary_source": "search result (0 hits); nearest constants at `src/xrpld/consensus/ConsensusParms.h:78-114` (E39)",
+   "source": null,
+   "statement": "grep -rn 'ledgerMAX_CLOSE' src/ include/ docs/ returns 0 hits. The maximum-time concepts that exist are ledgerMAX_CONSENSUS = 15 s (T-28), ledgerABANDON_CONSENSUS = 120 s (T-28), and the 10-minute anomaly bound in shouldCloseLedger (T-27). Any claim citing a ledgerMAX_CLOSE value is unsourced against this tree.",
+   "status": "VERIFIED",
+   "title": "There is no ledgerMAX_CLOSE constant (brief correction)"
+  },
+  {
+   "external": null,
+   "id": "T-36",
+   "note": null,
+   "primary_source": "`src/xrpld/app/consensus/RCLConsensus.cpp:1030-1042` (E36)",
+   "source": {
+    "anchor": "validators().expires()",
+    "end_line": 1042,
+    "excerpt": "E36",
+    "file": "src/xrpld/app/consensus/RCLConsensus.cpp",
+    "start_line": 1030
+   },
+   "statement": "In preStartRound(), if the validator list expiry app_.validators().expires() exists and is earlier than app_.timeKeeper().now(), the node sets validating_ = false and logs 'Voluntarily bowing out of consensus process because of an expired validator list.'",
+   "status": "VERIFIED",
+   "title": "A validator whose UNL has expired voluntarily bows out of consensus"
+  },
+  {
+   "external": null,
+   "id": "T-37",
+   "note": null,
+   "primary_source": "`src/xrpld/consensus/Consensus.h:1179-1215` (E37)",
+   "source": {
+    "anchor": "previousCloseCorrect",
+    "end_line": 1215,
+    "excerpt": "E37",
+    "file": "src/xrpld/consensus/Consensus.h",
+    "start_line": 1179
+   },
+   "statement": "phaseOpen() picks lastCloseTime = the previous ledger's close time when the mode is not wrongLedger, close-agree is true, and the close time is not the fallback parentCloseTime + 1s; otherwise it uses prevCloseTime_, the time the node itself saw. sinceClose may go negative if now_ is before that time. This is the quantity shouldCloseLedger compares against the idle interval.",
+   "status": "VERIFIED",
+   "title": "phaseOpen measures 'time since last close' against consensus time when the last close was agreed, else against locally seen time"
+  },
+  {
+   "external": {
+    "fetched": "2026-11-23",
+    "section": "Ledger Header",
+    "url": "https://xrpl.org/docs/concepts/ledgers/ledger-structure/",
+    "verbatim": "The *close time*, the official timestamp when this ledger's contents were finalized. This number is rounded off by a number of seconds, usually 10."
+   },
+   "id": "T-38",
+   "note": "Cross-check vs code: consistent in kind with T-20/T-22, but note D-03: the code default resolution is 30 s, not 10 s.",
+   "primary_source": "https://xrpl.org/docs/concepts/ledgers/ledger-structure/ - section 'Ledger Header'",
+   "source": null,
+   "statement": "Per xrpl.org, the ledger header's close time is 'the official timestamp when this ledger's contents were finalized. This number is rounded off by a number of seconds, usually 10.'",
+   "status": "SPECIFIED",
+   "title": "(SPECIFIED) xrpl.org: the ledger close time is the official finalisation timestamp, rounded, usually by 10 s"
+  },
+  {
+   "external": {
+    "fetched": "2026-11-23",
+    "section": "Trust-Based Validation",
+    "url": "https://xrpl.org/docs/concepts/consensus-protocol/",
+    "verbatim": "As long as fewer than 20% of trusted validators are faulty, consensus can continue unimpeded; and confirming an invalid transaction would require over 80% of trusted validators to collude."
+   },
+   "id": "T-39",
+   "note": "Cross-check vs code: the 80% figure is the validation quorum concept, not the 67% minCONSENSUS_PCT used to declare transaction-set consensus in checkConsensus (T-28). See D-02.",
+   "primary_source": "https://xrpl.org/docs/concepts/consensus-protocol/ - section 'Trust-Based Validation'",
+   "source": null,
+   "statement": "Per xrpl.org, each server listens to its trusted validators (UNL); 'as long as a large enough percentage of them agree that a set of transactions should occur and that a given ledger is the result, the server declares a consensus'; fewer than 20% faulty validators does not impede consensus.",
+   "status": "SPECIFIED",
+   "title": "(SPECIFIED) xrpl.org consensus protocol: agreement rests on a supermajority of trusted validators, not on synchronised clocks"
+  },
+  {
+   "external": {
+    "note": "In-tree primary documentation, not code; no external URL. Cited from the pinned tree itself."
+   },
+   "id": "T-40",
+   "note": null,
+   "primary_source": "`docs/consensus.md:145-169` (E38)",
+   "source": {
+    "anchor": "Effective Close Time",
+    "end_line": 169,
+    "excerpt": "E38",
+    "file": "docs/consensus.md",
+    "start_line": 145
+   },
+   "statement": "docs/consensus.md ('Effective Close Time') states each node calculates its own close time, rounds it to the effective close time resolution, and that this 'allows servers to derive a common time for a ledger without the need for perfectly synchronized clocks'; peers may 'agree to disagree', in which case the effective close time is 1 second past the prior close; the resolution coarsens when nodes fail to agree and refines when they consistently agree.",
+   "status": "SPECIFIED",
+   "title": "(SPECIFIED) In-tree design doc: servers derive a common close time 'without the need for perfectly synchronized clocks'"
+  },
+  {
+   "external": null,
+   "id": "T-41",
+   "modelled_from": [
+    "T-10",
+    "T-17",
+    "T-26"
+   ],
+   "note": "Caveat: this is a per-receiver acceptance window, not a network-wide guarantee; two nodes with opposite skews can disagree about a third node's validation. The 5-minute canBeCurrent bound (T-33) is the only ledger-level wall-clock bound and it applies to the parent close time, not to validation signing times.",
+   "primary_source": "Modelled from isCurrent() predicate (`src/xrpld/consensus/Validations.h:137-166`, E10) + RCLValidationsAdaptor::now() (`src/xrpld/app/consensus/RCLValidations.cpp:117-126`, E17) + median offset (`src/xrpld/app/consensus/RCLConsensus.cpp:704-728`, E27)",
+   "source": null,
+   "statement": "Because isCurrent() is evaluated against the receiver's network-adjusted clock (closeTime(), T-17), a remote validator is accepted while its signing time lies in (receiverNow - 3 min, receiverNow + 5 min). Modelled tolerance: a validator whose clock runs up to ~5 minutes fast relative to the receiver's adjusted clock, or up to ~3 minutes slow, still has its validations accepted; beyond that they are dropped as stale (T-11/T-12). The receiver's own offset (T-26, quarter-step median) shifts this window in the same direction as the network majority, so a node that is an outlier against the network median is pulled toward the majority rather than rejecting the majority.",
+   "status": "MODELLED",
+   "title": "(MODELLED) Implied clock-skew tolerance for validation acceptance"
+  },
+  {
+   "external": null,
+   "id": "T-42",
+   "note": "No live node was run; the loop's dynamics depend on round timing, peer composition, and the median's behaviour under real vote distributions.",
+   "primary_source": "Why untestable here: no live node was run; the loop's dynamics depend on round timing, peer composition, and the median's behaviour under real vote distributions.",
+   "source": null,
+   "statement": "T-04 (quarter-step damping) and T-26 (median offset per accepted round) together form a feedback loop that should pull a skewed node's adjusted clock toward the network median, but the convergence rate, stability under a minority of faulty reporters, and behaviour when the network itself is split cannot be established from static code. Would require a live node or a simulation harness (cf. src/test/consensus/ simulation tests, which were not executed in this research pass).",
+   "status": "UNTESTABLE",
+   "title": "(UNTESTABLE) Whether the close-offset feedback loop converges on a live network, and at what rate"
+  },
+  {
+   "external": null,
+   "id": "T-43",
+   "note": "Requires querying a live ledger (e.g. the close_time_resolution field of recent validated ledgers).",
+   "primary_source": "Why untestable here: requires querying a live ledger (e.g. the close_time_resolution field of recent validated ledgers).",
+   "source": null,
+   "statement": "The code permits resolutions from 10 s to 120 s (T-20) and adapts them (T-21); xrpl.org says close times are 'usually' rounded by 10 s (T-38) and ledgers close 'about every 3 to 5 seconds'. Which resolution the live network actually sits at, and the observed close interval distribution, cannot be established from this checkout.",
+   "status": "UNTESTABLE",
+   "title": "(UNTESTABLE) Real-world ledger close interval and close-time resolution actually observed"
+  }
+ ],
+ "schema_version": 1
+}
