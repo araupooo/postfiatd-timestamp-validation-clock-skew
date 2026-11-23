@@ -1,0 +1,69 @@
+{
+ "pack": "Timestamp Validation and Clock-Skew Tolerance in postfiatd",
+ "pinned_commit": "0085a1ff885d6a446369cf73a4430f75af22be55",
+ "counts": {
+  "rules": {
+   "total": 43,
+   "by_status": {
+    "VERIFIED": 37,
+    "SPECIFIED": 3,
+    "MODELLED": 1,
+    "UNTESTABLE": 2
+   }
+  },
+  "scenarios": {
+   "total": 8,
+   "validators_total": 48,
+   "accepted": 36,
+   "stale_future": 5,
+   "stale_past": 4,
+   "stale_seen": 3,
+   "laggards": 19,
+   "proposals_stale": 19,
+   "close_time_consensus": 3,
+   "close_time_no_consensus": 5,
+   "can_be_current_pass": 8,
+   "can_be_current_fail": 2
+  },
+  "findings": {
+   "total": 12,
+   "by_severity": {
+    "HIGH": 3,
+    "LOW": 4,
+    "MEDIUM": 5
+   },
+   "by_status": {
+    "VERIFIED": 12
+   }
+  },
+  "claims": {
+   "total": 24,
+   "by_status": {
+    "MODELLED": 4,
+    "SPECIFIED": 2,
+    "UNTESTABLE": 2,
+    "VERIFIED": 16
+   }
+  },
+  "risks": {
+   "total": 14,
+   "by_severity": {
+    "HIGH": 3,
+    "LOW": 3,
+    "MEDIUM": 8
+   }
+  },
+  "gaps": 8
+ },
+ "probes": {
+  "passed": 12,
+  "total": 12
+ },
+ "results_sha256": "a414f53a54f5b894d39092069acd83e5a9749d2a720898d5a2f22fa878386a36",
+ "matrix_sha256": "096549cd641d5abc2dad56688e9de4b2d4b88f538fefcc437b279d757df596c1",
+ "verification": {
+  "excerpts": 52,
+  "source_files": 21
+ },
+ "status": "SOURCE-DERIVED"
+}
