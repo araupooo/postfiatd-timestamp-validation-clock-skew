@@ -1,0 +1,18 @@
+# Source excerpt E17 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/app/consensus/RCLValidations.cpp, lines 117-126.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: cf96cc049a4050d61926c57af4e5021845ee0e0553ff25daf66354f800ccbd32
+# Source file git blob SHA: 669d69957da77a68bb5ace92a5e0ff789572be85
+# Source file size: 9726 bytes
+
+# --- src/xrpld/app/consensus/RCLValidations.cpp lines 117-126 ---
+RCLValidationsAdaptor::RCLValidationsAdaptor(Application& app, beast::Journal j)
+    : app_(app), j_(j)
+{
+}
+
+NetClock::time_point
+RCLValidationsAdaptor::now() const
+{
+    return app_.timeKeeper().closeTime();
+}

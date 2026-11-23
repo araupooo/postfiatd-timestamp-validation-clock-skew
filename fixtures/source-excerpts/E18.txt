@@ -1,0 +1,20 @@
+# Source excerpt E18 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/app/consensus/RCLConsensus.cpp, lines 813-824.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: 72716393a820832d7fd6f6084f4ac9534fdc7ccf09c10f5aa8d2f129828a0cee
+# Source file git blob SHA: 457555cc1c83cb617a6838e0099fc93e1d715b49
+# Source file size: 37567 bytes
+
+# --- src/xrpld/app/consensus/RCLConsensus.cpp lines 813-824 ---
+void
+RCLConsensus::Adaptor::validate(
+    RCLCxLedger const& ledger,
+    RCLTxSet const& txns,
+    bool proposing)
+{
+    using namespace std::chrono_literals;
+
+    auto validationTime = app_.timeKeeper().closeTime();
+    if (validationTime <= lastValidationTime_)
+        validationTime = lastValidationTime_ + 1s;
+    lastValidationTime_ = validationTime;

@@ -1,0 +1,38 @@
+# Source excerpt E10 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/Validations.h, lines 137-166.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: e08b8fca2955b9c45c4673b4e873712c8d7ded405e3952ee011adea53c3d19da
+# Source file git blob SHA: c333aeaefd7890bf1c7d19e56eadbae0b788602e
+# Source file size: 39557 bytes
+
+# --- src/xrpld/consensus/Validations.h lines 137-166 ---
+/** Whether a validation is still current
+
+    Determines whether a validation can still be considered the current
+    validation from a node based on when it was signed by that node and first
+    seen by this node.
+
+    @param p ValidationParms with timing parameters
+    @param now Current time
+    @param signTime When the validation was signed
+    @param seenTime When the validation was first seen locally
+*/
+inline bool
+isCurrent(
+    ValidationParms const& p,
+    NetClock::time_point now,
+    NetClock::time_point signTime,
+    NetClock::time_point seenTime)
+{
+    // Because this can be called on untrusted, possibly
+    // malicious validations, we do our math in a way
+    // that avoids any chance of overflowing or underflowing
+    // the signing time.  All of the expressions below are
+    // promoted from unsigned 32 bit to signed 64 bit prior
+    // to computation.
+
+    return (signTime > (now - p.validationCURRENT_EARLY)) &&
+        (signTime < (now + p.validationCURRENT_WALL)) &&
+        ((seenTime == NetClock::time_point{}) ||
+         (seenTime < (now + p.validationCURRENT_LOCAL)));
+}

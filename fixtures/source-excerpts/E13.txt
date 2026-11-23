@@ -1,0 +1,33 @@
+# Source excerpt E13 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/Validations.h, lines 509-533.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: e08b8fca2955b9c45c4673b4e873712c8d7ded405e3952ee011adea53c3d19da
+# Source file git blob SHA: c333aeaefd7890bf1c7d19e56eadbae0b788602e
+# Source file size: 39557 bytes
+
+# --- src/xrpld/consensus/Validations.h lines 509-533 ---
+    template <class Pre, class F>
+    void
+    current(std::lock_guard<Mutex> const& lock, Pre&& pre, F&& f)
+    {
+        NetClock::time_point t = adaptor_.now();
+        pre(current_.size());
+        auto it = current_.begin();
+        while (it != current_.end())
+        {
+            // Check for staleness
+            if (!isCurrent(
+                    parms_, t, it->second.signTime(), it->second.seenTime()))
+            {
+                removeTrie(lock, it->first, it->second);
+                it = current_.erase(it);
+            }
+            else
+            {
+                auto cit = typename decltype(current_)::const_iterator{it};
+                // contains a live record
+                f(cit->first, cit->second);
+                ++it;
+            }
+        }
+    }

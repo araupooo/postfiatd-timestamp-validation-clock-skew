@@ -1,0 +1,29 @@
+# Source excerpt E16 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/Validations.h, lines 1127-1147.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: e08b8fca2955b9c45c4673b4e873712c8d7ded405e3952ee011adea53c3d19da
+# Source file git blob SHA: c333aeaefd7890bf1c7d19e56eadbae0b788602e
+# Source file size: 39557 bytes
+
+# --- src/xrpld/consensus/Validations.h lines 1127-1147 ---
+    std::size_t
+    laggards(Seq const seq, hash_set<NodeKey>& trustedKeys)
+    {
+        std::size_t laggards = 0;
+
+        current(
+            std::lock_guard{mutex_},
+            [](std::size_t) {},
+            [&](NodeID const&, Validation const& v) {
+                if (adaptor_.now() <
+                        v.seenTime() + parms_.validationFRESHNESS &&
+                    trustedKeys.find(v.key()) != trustedKeys.end())
+                {
+                    trustedKeys.erase(v.key());
+                    if (seq > v.seq())
+                        ++laggards;
+                }
+            });
+
+        return laggards;
+    }

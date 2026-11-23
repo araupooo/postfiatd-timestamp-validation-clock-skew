@@ -1,0 +1,31 @@
+# Source excerpt E19 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: include/xrpl/protocol/STValidation.h, lines 231-253.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: dd1b472baa2be7c191597906ea4eadda8e2d4b8513c2ef0b5ec71b2734c92033
+# Source file git blob SHA: 27a18f8dcd6e0cf11a0c6c83e7e66ce860767fe4
+# Source file size: 9257 bytes
+
+# --- include/xrpl/protocol/STValidation.h lines 231-253 ---
+template <typename F>
+STValidation::STValidation(
+    NetClock::time_point signTime,
+    PublicKey const& pk,
+    SecretKey const& sk,
+    NodeID const& nodeID,
+    F&& f)
+    : STObject(validationFormat(), sfValidation)
+    , signingPubKey_(pk)
+    , nodeID_(nodeID)
+    , seenTime_(signTime)
+{
+    XRPL_ASSERT(
+        nodeID_.isNonZero(),
+        "ripple::STValidation::STValidation(PublicKey, SecretKey) : nonzero "
+        "node");
+
+    // First, set our own public key:
+    if (publicKeyType(pk) != KeyType::secp256k1)
+        LogicError("We can only use secp256k1 keys for signing validations");
+
+    setFieldVL(sfSigningPubKey, pk.slice());
+    setFieldU32(sfSigningTime, signTime.time_since_epoch().count());

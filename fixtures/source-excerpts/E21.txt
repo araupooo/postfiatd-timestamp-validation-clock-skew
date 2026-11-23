@@ -1,0 +1,21 @@
+# Source excerpt E21 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/LedgerTiming.h, lines 35-47.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: 371b38d96e1cee1662f6a585a6d75bd72e59d2329f9bdd34f66beb0ff3470031
+# Source file git blob SHA: 434f19b081886221689718818c6aae53f89a074b
+# Source file size: 6559 bytes
+
+# --- src/xrpld/consensus/LedgerTiming.h lines 35-47 ---
+std::chrono::seconds constexpr ledgerPossibleTimeResolutions[] = {
+    std::chrono::seconds{10},
+    std::chrono::seconds{20},
+    std::chrono::seconds{30},
+    std::chrono::seconds{60},
+    std::chrono::seconds{90},
+    std::chrono::seconds{120}};
+
+//! Initial resolution of ledger close time.
+auto constexpr ledgerDefaultTimeResolution = ledgerPossibleTimeResolutions[2];
+
+//! Close time resolution in genesis ledger
+auto constexpr ledgerGenesisTimeResolution = ledgerPossibleTimeResolutions[0];

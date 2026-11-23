@@ -1,0 +1,50 @@
+# Source excerpt E12 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/overlay/detail/PeerImp.cpp, lines 2446-2487.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: 8de044c6d04ad1a88729a7e5b2ff994e92335ac357c9d80aaf905c2051e73c8b
+# Source file git blob SHA: d823bf23a17e62172320628a800fdda92fbb2bcb
+# Source file size: 116691 bytes
+
+# --- src/xrpld/overlay/detail/PeerImp.cpp lines 2446-2487 ---
+    try
+    {
+        auto const closeTime = app_.timeKeeper().closeTime();
+
+        std::shared_ptr<STValidation> val;
+        {
+            SerialIter sit(makeSlice(m->validation()));
+            // Require canonical field order: the relay suppression key is
+            // the hash of these bytes, so a re-encoded copy of a validation
+            // must not pass as a new message.
+            try
+            {
+                val = std::make_shared<STValidation>(
+                    std::ref(sit),
+                    [this](PublicKey const& pk) {
+                        return calcNodeID(
+                            app_.validatorManifests().getMasterKey(pk));
+                    },
+                    STValidation::DeserializeOptions{
+                        .checkSignature = false,
+                        .requireCanonicalOrder = true});
+            }
+            catch (std::exception const& e)
+            {
+                JLOG(p_journal_.warn())
+                    << "Validation: Exception, " << e.what();
+                fee_.update(Resource::feeInvalidData, e.what());
+                return;
+            }
+            val->setSeen(closeTime);
+        }
+
+        if (!isCurrent(
+                app_.getValidations().parms(),
+                app_.timeKeeper().closeTime(),
+                val->getSignTime(),
+                val->getSeenTime()))
+        {
+            JLOG(p_journal_.trace()) << "Validation: Not current";
+            fee_.update(Resource::feeUselessData, "not current");
+            return;
+        }

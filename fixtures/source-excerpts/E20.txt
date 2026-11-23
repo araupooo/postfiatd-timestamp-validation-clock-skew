@@ -1,0 +1,17 @@
+# Source excerpt E20 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/libxrpl/protocol/STValidation.cpp, lines 111-119.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: bddbc44df78d7ae2e28319a9e47cf2fbcd24643163615f11bdc3b51a6590a12b
+# Source file git blob SHA: d2cb0586f261e9e06fa31f0da9c3fdc28cfc62ca
+# Source file size: 5493 bytes
+
+# --- src/libxrpl/protocol/STValidation.cpp lines 111-119 ---
+STValidation::getSignTime() const
+{
+    return NetClock::time_point{NetClock::duration{getFieldU32(sfSigningTime)}};
+}
+
+NetClock::time_point
+STValidation::getSeenTime() const noexcept
+{
+    return seenTime_;
