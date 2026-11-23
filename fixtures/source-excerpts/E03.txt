@@ -1,0 +1,26 @@
+# Source excerpt E03 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/core/TimeKeeper.h, lines 69-86.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: e33ecc2d8a09981c78b2dc626f23f95798de9e8aebd1a0544e3b00c3a53f724d
+# Source file git blob SHA: f94a92a6666284d501cf6e4a5b7d7c69c2b1fa35
+# Source file size: 4227 bytes
+
+# --- src/xrpld/core/TimeKeeper.h lines 69-86 ---
+    /** Returns the predicted close time, in network time.
+
+        The predicted close time represents the notional "center" of the
+        network. Each server assumes that its clock is correct and tries
+        to pull the close time towards its measure of network time.
+    */
+    [[nodiscard]] time_point
+    closeTime() const
+    {
+        return now() + closeOffset_.load();
+    }
+
+    // This may return a negative value
+    [[nodiscard]] std::chrono::seconds
+    closeOffset() const
+    {
+        return closeOffset_.load();
+    }

@@ -1,0 +1,15 @@
+# Source excerpt E08 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/Validations.h, lines 73-79.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: e08b8fca2955b9c45c4673b4e873712c8d7ded405e3952ee011adea53c3d19da
+# Source file git blob SHA: c333aeaefd7890bf1c7d19e56eadbae0b788602e
+# Source file size: 39557 bytes
+
+# --- src/xrpld/consensus/Validations.h lines 73-79 ---
+    /** Duration a set of validations for a given ledger hash remain valid
+
+        The number of seconds before a set of validations for a given ledger
+        hash can expire.  This keeps validations for recent ledgers available
+        for a reasonable interval.
+    */
+    std::chrono::seconds validationSET_EXPIRES = std::chrono::minutes{10};

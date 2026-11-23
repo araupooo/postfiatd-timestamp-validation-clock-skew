@@ -1,0 +1,17 @@
+# Source excerpt E09 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/Validations.h, lines 81-89.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: e08b8fca2955b9c45c4673b4e873712c8d7ded405e3952ee011adea53c3d19da
+# Source file git blob SHA: c333aeaefd7890bf1c7d19e56eadbae0b788602e
+# Source file size: 39557 bytes
+
+# --- src/xrpld/consensus/Validations.h lines 81-89 ---
+    /** How long we consider a validation fresh.
+     *
+     *  The number of seconds since a validation has been seen for it to
+     *  be considered to accurately represent a live proposer's most recent
+     *  validation. This value should be sufficiently higher than
+     *  ledgerMAX_CONSENSUS such that validators who are waiting for
+     *  laggards are not considered offline.
+     */
+    std::chrono::seconds validationFRESHNESS = std::chrono::seconds{20};

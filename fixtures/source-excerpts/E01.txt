@@ -1,0 +1,36 @@
+# Source excerpt E01 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: include/xrpl/basics/chrono.h, lines 45-72.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: d73a75586736758075150cf8ae84e6046e8a1140f5dd7348af925906b7bfb8b8
+# Source file git blob SHA: 2ed1a960470cc4a35336424d189cd4de99569b0d
+# Source file size: 3730 bytes
+
+# --- include/xrpl/basics/chrono.h lines 45-72 ---
+/** Clock for measuring the network time.
+
+    The epoch is January 1, 2000
+
+    epoch_offset
+    = date(2000-01-01) - date(1970-0-01)
+    = days(10957)
+    = seconds(946684800)
+*/
+
+constexpr static std::chrono::seconds epoch_offset =
+    date::sys_days{date::year{2000} / 1 / 1} -
+    date::sys_days{date::year{1970} / 1 / 1};
+
+static_assert(epoch_offset.count() == 946684800);
+
+class NetClock
+{
+public:
+    explicit NetClock() = default;
+
+    using rep = std::uint32_t;
+    using period = std::ratio<1>;
+    using duration = std::chrono::duration<rep, period>;
+    using time_point = std::chrono::time_point<NetClock>;
+
+    static bool const is_steady = false;
+};

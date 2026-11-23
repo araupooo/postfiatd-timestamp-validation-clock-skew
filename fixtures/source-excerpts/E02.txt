@@ -1,0 +1,40 @@
+# Source excerpt E02 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/core/TimeKeeper.h, lines 36-67.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: e33ecc2d8a09981c78b2dc626f23f95798de9e8aebd1a0544e3b00c3a53f724d
+# Source file git blob SHA: f94a92a6666284d501cf6e4a5b7d7c69c2b1fa35
+# Source file size: 4227 bytes
+
+# --- src/xrpld/core/TimeKeeper.h lines 36-67 ---
+    // Adjust system_clock::time_point for NetClock epoch
+    static constexpr time_point
+    adjust(std::chrono::system_clock::time_point when)
+    {
+        return time_point(std::chrono::duration_cast<duration>(
+            when.time_since_epoch() - epoch_offset));
+    }
+
+public:
+    virtual ~TimeKeeper() = default;
+
+    /** Returns the current time, using the server's clock.
+
+        It's possible for servers to have a different value for network
+        time, especially if they do not use some external mechanism for
+        time synchronization (e.g. NTP or SNTP). This is fine.
+
+        This estimate is not directly visible to other servers over the
+        protocol, but it is possible for them to make an educated guess
+        if this server publishes proposals or validations.
+
+        @note The network time is adjusted for the "Ripple epoch" which
+              was arbitrarily defined as 2000-01-01T00:00:00Z by Arthur
+              Britto and David Schwartz during early development of the
+              code. No rationale has been provided for this curious and
+              annoying, but otherwise unimportant, choice.
+    */
+    [[nodiscard]] time_point
+    now() const override
+    {
+        return adjust(std::chrono::system_clock::now());
+    }

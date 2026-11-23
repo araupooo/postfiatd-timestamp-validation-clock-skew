@@ -1,0 +1,14 @@
+# Source excerpt E07 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/Validations.h, lines 66-71.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: e08b8fca2955b9c45c4673b4e873712c8d7ded405e3952ee011adea53c3d19da
+# Source file git blob SHA: c333aeaefd7890bf1c7d19e56eadbae0b788602e
+# Source file size: 39557 bytes
+
+# --- src/xrpld/consensus/Validations.h lines 66-71 ---
+    /** Duration pre-close in which validations are acceptable.
+
+        The number of seconds before a close time that we consider a validation
+        acceptable. This protects against extreme clock errors
+    */
+    std::chrono::seconds validationCURRENT_EARLY = std::chrono::minutes{3};

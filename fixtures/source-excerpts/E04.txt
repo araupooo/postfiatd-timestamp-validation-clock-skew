@@ -1,0 +1,37 @@
+# Source excerpt E04 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/core/TimeKeeper.h, lines 88-116.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: e33ecc2d8a09981c78b2dc626f23f95798de9e8aebd1a0544e3b00c3a53f724d
+# Source file git blob SHA: f94a92a6666284d501cf6e4a5b7d7c69c2b1fa35
+# Source file size: 4227 bytes
+
+# --- src/xrpld/core/TimeKeeper.h lines 88-116 ---
+    /** Adjust the close time, based on the network's view of time. */
+    std::chrono::seconds
+    adjustCloseTime(std::chrono::seconds by)
+    {
+        using namespace std::chrono_literals;
+
+        auto offset = closeOffset_.load();
+
+        if (by == 0s && offset == 0s)
+            return offset;
+
+        // The close time adjustment is serialized externally to this
+        // code. The compare/exchange only serves as a weak check and
+        // should not fail. Even if it does, it's safe to simply just
+        // skip the adjustment.
+        closeOffset_.compare_exchange_strong(offset, [by, offset]() {
+            // Ignore small offsets and push the close time
+            // towards our wall time.
+            if (by > 1s)
+                return offset + ((by + 3s) / 4);
+
+            if (by < -1s)
+                return offset + ((by - 3s) / 4);
+
+            return (offset * 3) / 4;
+        }());
+
+        return closeOffset_.load();
+    }
