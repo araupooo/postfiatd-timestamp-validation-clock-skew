@@ -1,0 +1,32 @@
+# Claim index
+
+Every claim carries one status: VERIFIED (re-checked against the pinned checkout by `scripts/probe.py`), SPECIFIED (stated from a protocol doc, not from pinned code), MODELLED (an output or inference of the pack's simulator, not a source observation), UNTESTABLE (cannot be established from source alone).
+
+| ID | Status | Claim | Rule | Evidence |
+| --- | --- | --- | --- | --- |
+| C-01 | VERIFIED | Network time is whole seconds since the Ripple epoch 2000-01-01 (epoch_offset 946684800 s), uint32, with is_steady = false (chrono.h:45-72). | T-01 | fixtures/source-excerpts/E01.txt |
+| C-02 | VERIFIED | TimeKeeper::now() returns system_clock::now() minus epoch_offset; there is no other wall-clock source in the node (TimeKeeper.h:36-67). | T-02 | fixtures/source-excerpts/E02.txt |
+| C-03 | VERIFIED | closeTime() is now() + closeOffset_, where the offset is learned from peers, not measured locally (TimeKeeper.h:69-86). | T-03 | fixtures/source-excerpts/E03.txt |
+| C-04 | VERIFIED | adjustCloseTime() moves the offset by (by +/- 3s)/4 for offsets over 1 s, and decays it by 3/4 inside +/-1 s (TimeKeeper.h:88-116). | T-04 | fixtures/source-excerpts/E04.txt |
+| C-05 | VERIFIED | Validation windows: CURRENT_WALL 5 min, CURRENT_LOCAL 3 min, CURRENT_EARLY 3 min, SET_EXPIRES 10 min, FRESHNESS 20 s (Validations.h:50-89). | T-05 | fixtures/source-excerpts/E05.txt, fixtures/source-excerpts/E06.txt, fixtures/source-excerpts/E07.txt, fixtures/source-excerpts/E08.txt, fixtures/source-excerpts/E09.txt |
+| C-06 | VERIFIED | isCurrent(): a validation is current iff signTime > now - 3 min AND signTime < now + 5 min AND (seenTime is zero OR seenTime < now + 3 min) (Validations.h:162-165). | T-10 | fixtures/source-excerpts/E10.txt |
+| C-07 | VERIFIED | add() rejects a non-current validation as stale before any other check, and PeerImp drops a non-current validation with feeUselessData before signature verification (Validations.h:623-627; PeerImp.cpp:2475-2487). | T-11 | fixtures/source-excerpts/E11.txt, fixtures/source-excerpts/E12.txt |
+| C-08 | VERIFIED | current() flushes stale validations from the trie on every read, and expire() sweeps validation sets after 10 min of disuse (Validations.h:509-533, 729-775). | T-13 | fixtures/source-excerpts/E13.txt, fixtures/source-excerpts/E14.txt |
+| C-09 | VERIFIED | SeqEnforcer requires strictly increasing sequence numbers per validator on a monotonic steady clock, resetting after validationSET_EXPIRES (Validations.h:98-128). | T-15 | fixtures/source-excerpts/E15.txt |
+| C-10 | VERIFIED | A proposer counts as offline (laggard) when its last validation was seen more than 20 s ago (Validations.h:1127-1147). | T-16 | fixtures/source-excerpts/E16.txt |
+| C-11 | VERIFIED | All currency checks use the network-adjusted closeTime(), not raw wall time, and a validator's own signing time is its adjusted close time forced strictly increasing by 1 s (RCLValidations.cpp:122-126; RCLConsensus.cpp:819-824). | T-17 | fixtures/source-excerpts/E17.txt, fixtures/source-excerpts/E18.txt |
+| C-12 | VERIFIED | Close-time resolutions are 10/20/30/60/90/120 s, default 30 s, genesis 10 s, adapting coarser after a missed agreement and finer after agreement (LedgerTiming.h:35-122). | T-20 | fixtures/source-excerpts/E21.txt, fixtures/source-excerpts/E22.txt |
+| C-13 | VERIFIED | roundCloseTime() rounds to the nearest multiple of the resolution (half up); effCloseTime() is never earlier than prior close + 1 s (LedgerTiming.h:124-169). | T-22 | fixtures/source-excerpts/E23.txt, fixtures/source-excerpts/E24.txt |
+| C-14 | VERIFIED | Close-time consensus needs 75% of participants on one rounded bin; without it the round does not accept, and the agree-to-disagree fallback is prior close + 1 s flagged sLCF_NoConsensusTime (Consensus.h:1507-1641; RCLConsensus.cpp:491-506). | T-24 | fixtures/source-excerpts/E25.txt, fixtures/source-excerpts/E26.txt |
+| C-15 | VERIFIED | Each accepted round re-centres the local clock on the lower weighted median of peer close times (self weight 1), applied with quarter-step damping (RCLConsensus.cpp:704-728). | T-26 | fixtures/source-excerpts/E27.txt |
+| C-16 | VERIFIED | canBeCurrent() is the only ledger-level wall-clock bound (parent close time within 5 min); there is no ledgerMAX_CLOSE (0 hits) and the ConsensusParms validation windows are dead copies (0 references). | T-33 | fixtures/source-excerpts/E34.txt, fixtures/source-excerpts/E35.txt |
+| C-17 | SPECIFIED | Per xrpl.org, the ledger close time is the official finalisation timestamp, "rounded off by a number of seconds, usually 10" (ledger-structure, Ledger Header). | T-38 | docs/citations.md |
+| C-18 | SPECIFIED | Per xrpl.org, consensus rests on a supermajority of trusted validators; fewer than 20% faulty does not impede consensus, and confirming an invalid transaction needs over 80% collusion (consensus-protocol, Trust-Based Validation). | T-39 | docs/citations.md |
+| C-19 | MODELLED | A validator is accepted while its signing time lies in (receiverNow - 3 min, receiverNow + 5 min); beyond that it is dropped as stale. This is a per-receiver window, not a network-wide guarantee (T-41). | T-41 | outputs/derived/timestamp-results.json |
+| C-20 | MODELLED | S-07: a free-running clock drifting +12 s per round is pulled back only by quarter steps (offsets -3, -9, -18, -30, -45, -63, -84 over 7 rounds); the node bows out once its UNL expires (rounds 6-7). | T-04 | outputs/derived/timestamp-results.json |
+| C-21 | MODELLED | S-08: a malicious validator's +3600 s close-time proposal is not dropped for being far-future (no wall-clock bound exists); it enters the vote with 1 vote and loses to the honest bin. | T-24 | outputs/derived/timestamp-results.json |
+| C-22 | MODELLED | S-06: an evenly split close-time vote (4 vs 4) fails to reach 75%, so the round falls back to prior close + 1 s with closeFlags = sLCF_NoConsensusTime and the resolution coarsens 30 s to 60 s. | T-25 | outputs/derived/timestamp-results.json |
+| C-23 | UNTESTABLE | Whether the close-offset feedback loop converges on a live network, and at what rate, cannot be established from static code. | T-42 | outputs/derived/timestamp-results.json (model) |
+| C-24 | UNTESTABLE | The ledger close interval and close-time resolution actually observed on the live network cannot be established from this checkout. | T-43 | outputs/derived/timestamp-results.json (model) |
+
+Counts: 24 claims (VERIFIED 16, SPECIFIED 2, MODELLED 4, UNTESTABLE 2).
