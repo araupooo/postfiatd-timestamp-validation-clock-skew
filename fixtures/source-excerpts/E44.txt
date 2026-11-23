@@ -1,0 +1,14 @@
+# Source excerpt E44 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/app/ledger/LedgerMaster.h, lines 116-121.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: 682e966533b1325e1091c6950eea99a7f4a1e4306013ff7deca0269ed5ba9494
+# Source file git blob SHA: 5e0598d78bb3a93123da1742c71aa4fb4abe93d1
+# Source file size: 12583 bytes
+
+# --- src/xrpld/app/ledger/LedgerMaster.h lines 116-121 ---
+    /** Check the sequence number and parent close time of a
+        ledger against our clock and last validated ledger to
+        see if it can be the network's current ledger
+    */
+    bool
+    canBeCurrent(std::shared_ptr<Ledger const> const& ledger);

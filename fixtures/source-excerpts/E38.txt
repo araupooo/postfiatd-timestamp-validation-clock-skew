@@ -1,0 +1,33 @@
+# Source excerpt E38 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: docs/consensus.md, lines 145-169.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: 265edbdad3e04a8f7dee66e9faa5da8176472ff0d895d0ddb87aa03f60487d34
+# Source file git blob SHA: 067e15d0c871020f1cbc86d28c503d6cf66b643f
+# Source file size: 30816 bytes
+
+# --- docs/consensus.md lines 145-169 ---
+### Effective Close Time ### {#effective_close_time}
+
+In addition to agreeing on a transaction set, each consensus round tries to
+agree on the time the ledger closed. Each node calculates its own close time
+when it closes the open ledger. This exact close time is rounded to the nearest
+multiple of the current _effective close time resolution_. It is this
+_effective close time_ that nodes seek to agree on. This allows servers to
+derive a common time for a ledger without the need for perfectly synchronized
+clocks. As depicted below, the 3 pink arrows represent exact close times from 3
+consensus nodes that round to the same effective close time given the current
+resolution. The purple arrow represents a peer whose estimate rounds to a
+different effective close time given the current resolution.
+
+![Effective Close Time](images/consensus/EffCloseTime.png "Effective Close Time")
+
+The effective close time is part of the node's position and is shared with peers
+in its proposals. Just like the position on the consensus transaction set, a
+node will update its close time position in response to its peers' effective
+close time positions. Peers can agree to disagree on the close time, in which
+case the effective close time is taken as 1 second past the prior close.
+
+The close time resolution is itself dynamic, decreasing (coarser) resolution in
+subsequent consensus rounds if nodes are unable to reach consensus on an
+effective close time and increasing (finer) resolution if nodes consistently
+reach close time consensus.

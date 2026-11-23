@@ -1,0 +1,20 @@
+# Source excerpt E42 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/Consensus.h, lines 337-348.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: c600a12673215a68513542bac16b89dccabff37f3652d79b8159860b00898dd8
+# Source file git blob SHA: 9ccc080857e2be382365dff5f349544b9907d9cf
+# Source file size: 65913 bytes
+
+# --- src/xrpld/consensus/Consensus.h lines 337-348 ---
+    //! Clock type for measuring time within the consensus code
+    using clock_type = beast::abstract_clock<std::chrono::steady_clock>;
+
+    Consensus(Consensus&&) noexcept = default;
+
+    /** Constructor.
+
+        @param clock The clock used to internally sample consensus progress
+        @param adaptor The instance of the adaptor class
+        @param j The journal to log debug output
+    */
+    Consensus(clock_type const& clock, Adaptor& adaptor, beast::Journal j);

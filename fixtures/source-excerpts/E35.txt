@@ -1,0 +1,30 @@
+# Source excerpt E35 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/ConsensusParms.h, lines 45-66.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: 95f6ea2da07862ff830ab2eaab0f3b384fb89b29260a6b717b2f6c2b7380cca7
+# Source file git blob SHA: d565bd9a5228de171cc777a0a098592f9e8505df
+# Source file size: 8302 bytes
+
+# --- src/xrpld/consensus/ConsensusParms.h lines 45-66 ---
+    /** The duration a validation remains current after its ledger's
+       close time.
+
+        This is a safety to protect against very old validations and the time
+        it takes to adjust the close time accuracy window.
+    */
+    std::chrono::seconds const validationVALID_WALL = std::chrono::minutes{5};
+
+    /** Duration a validation remains current after first observed.
+
+       The duration a validation remains current after the time we
+       first saw it. This provides faster recovery in very rare cases where the
+       number of validations produced by the network is lower than normal
+    */
+    std::chrono::seconds const validationVALID_LOCAL = std::chrono::minutes{3};
+
+    /**  Duration pre-close in which validations are acceptable.
+
+        The number of seconds before a close time that we consider a validation
+        acceptable. This protects against extreme clock errors
+    */
+    std::chrono::seconds const validationVALID_EARLY = std::chrono::minutes{3};

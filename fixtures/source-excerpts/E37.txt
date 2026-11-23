@@ -1,0 +1,45 @@
+# Source excerpt E37 — postfiatd 0085a1ff885d6a446369cf73a4430f75af22be55.
+# File: src/xrpld/consensus/Consensus.h, lines 1179-1215.
+# Line numbers verified with grep -n on a local checkout of the pinned commit.
+# Source file SHA-256: c600a12673215a68513542bac16b89dccabff37f3652d79b8159860b00898dd8
+# Source file git blob SHA: 9ccc080857e2be382365dff5f349544b9907d9cf
+# Source file size: 65913 bytes
+
+# --- src/xrpld/consensus/Consensus.h lines 1179-1215 ---
+    openTime_.tick(clock_.now());
+
+    // This computes how long since last ledger's close time
+    milliseconds sinceClose;
+    {
+        auto const mode = mode_.get();
+        bool const closeAgree = previousLedger_.closeAgree();
+        auto const prevCloseTime = previousLedger_.closeTime();
+        auto const prevParentCloseTimePlus1 =
+            previousLedger_.parentCloseTime() + 1s;
+        bool const previousCloseCorrect =
+            (mode != ConsensusMode::wrongLedger) && closeAgree &&
+            (prevCloseTime != prevParentCloseTimePlus1);
+
+        auto const lastCloseTime = previousCloseCorrect
+            ? prevCloseTime    // use consensus timing
+            : prevCloseTime_;  // use the time we saw internally
+
+        if (now_ >= lastCloseTime)
+            sinceClose = duration_cast<milliseconds>(now_ - lastCloseTime);
+        else
+            sinceClose = -duration_cast<milliseconds>(lastCloseTime - now_);
+        CLOG(clog) << "calculating how long since last ledger's close time "
+                      "based on mode : "
+                   << to_string(mode) << ", previous closeAgree: " << closeAgree
+                   << ", previous close time: " << to_string(prevCloseTime)
+                   << ", previous parent close time + 1s: "
+                   << to_string(prevParentCloseTimePlus1)
+                   << ", previous close time seen internally: "
+                   << to_string(prevCloseTime_)
+                   << ", last close time: " << to_string(lastCloseTime)
+                   << ", since close: " << sinceClose.count() << ". ";
+    }
+
+    auto const idleInterval = std::max<milliseconds>(
+        adaptor_.parms().ledgerIDLE_INTERVAL,
+        2 * previousLedger_.closeTimeResolution());
