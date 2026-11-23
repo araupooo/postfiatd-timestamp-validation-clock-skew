@@ -1,0 +1,474 @@
+{
+ "excerpts": [
+  {
+   "anchor": "class NetClock",
+   "blob_sha": "2ed1a960470cc4a35336424d189cd4de99569b0d",
+   "blob_size": 3730,
+   "end_line": 72,
+   "file": "include/xrpl/basics/chrono.h",
+   "id": "E01",
+   "start_line": 45
+  },
+  {
+   "anchor": "std::chrono::system_clock::now()",
+   "blob_sha": "f94a92a6666284d501cf6e4a5b7d7c69c2b1fa35",
+   "blob_size": 4227,
+   "end_line": 67,
+   "file": "src/xrpld/core/TimeKeeper.h",
+   "id": "E02",
+   "start_line": 36
+  },
+  {
+   "anchor": "closeTime() const",
+   "blob_sha": "f94a92a6666284d501cf6e4a5b7d7c69c2b1fa35",
+   "blob_size": 4227,
+   "end_line": 86,
+   "file": "src/xrpld/core/TimeKeeper.h",
+   "id": "E03",
+   "start_line": 69
+  },
+  {
+   "anchor": "adjustCloseTime",
+   "blob_sha": "f94a92a6666284d501cf6e4a5b7d7c69c2b1fa35",
+   "blob_size": 4227,
+   "end_line": 116,
+   "file": "src/xrpld/core/TimeKeeper.h",
+   "id": "E04",
+   "start_line": 88
+  },
+  {
+   "anchor": "validationCURRENT_WALL",
+   "blob_sha": "c333aeaefd7890bf1c7d19e56eadbae0b788602e",
+   "blob_size": 39557,
+   "end_line": 56,
+   "file": "src/xrpld/consensus/Validations.h",
+   "id": "E05",
+   "start_line": 40
+  },
+  {
+   "anchor": "validationCURRENT_LOCAL",
+   "blob_sha": "c333aeaefd7890bf1c7d19e56eadbae0b788602e",
+   "blob_size": 39557,
+   "end_line": 64,
+   "file": "src/xrpld/consensus/Validations.h",
+   "id": "E06",
+   "start_line": 58
+  },
+  {
+   "anchor": "validationCURRENT_EARLY",
+   "blob_sha": "c333aeaefd7890bf1c7d19e56eadbae0b788602e",
+   "blob_size": 39557,
+   "end_line": 71,
+   "file": "src/xrpld/consensus/Validations.h",
+   "id": "E07",
+   "start_line": 66
+  },
+  {
+   "anchor": "validationSET_EXPIRES",
+   "blob_sha": "c333aeaefd7890bf1c7d19e56eadbae0b788602e",
+   "blob_size": 39557,
+   "end_line": 79,
+   "file": "src/xrpld/consensus/Validations.h",
+   "id": "E08",
+   "start_line": 73
+  },
+  {
+   "anchor": "validationFRESHNESS",
+   "blob_sha": "c333aeaefd7890bf1c7d19e56eadbae0b788602e",
+   "blob_size": 39557,
+   "end_line": 89,
+   "file": "src/xrpld/consensus/Validations.h",
+   "id": "E09",
+   "start_line": 81
+  },
+  {
+   "anchor": "isCurrent(",
+   "blob_sha": "c333aeaefd7890bf1c7d19e56eadbae0b788602e",
+   "blob_size": 39557,
+   "end_line": 166,
+   "file": "src/xrpld/consensus/Validations.h",
+   "id": "E10",
+   "start_line": 137
+  },
+  {
+   "anchor": "ValStatus::stale",
+   "blob_sha": "c333aeaefd7890bf1c7d19e56eadbae0b788602e",
+   "blob_size": 39557,
+   "end_line": 627,
+   "file": "src/xrpld/consensus/Validations.h",
+   "id": "E11",
+   "start_line": 615
+  },
+  {
+   "anchor": "setSeen(closeTime)",
+   "blob_sha": "d823bf23a17e62172320628a800fdda92fbb2bcb",
+   "blob_size": 116691,
+   "end_line": 2487,
+   "file": "src/xrpld/overlay/detail/PeerImp.cpp",
+   "id": "E12",
+   "start_line": 2446
+  },
+  {
+   "anchor": "isCurrent(",
+   "blob_sha": "c333aeaefd7890bf1c7d19e56eadbae0b788602e",
+   "blob_size": 39557,
+   "end_line": 533,
+   "file": "src/xrpld/consensus/Validations.h",
+   "id": "E13",
+   "start_line": 509
+  },
+  {
+   "anchor": "expire(beast::Journal& j)",
+   "blob_sha": "c333aeaefd7890bf1c7d19e56eadbae0b788602e",
+   "blob_size": 39557,
+   "end_line": 775,
+   "file": "src/xrpld/consensus/Validations.h",
+   "id": "E14",
+   "start_line": 729
+  },
+  {
+   "anchor": "SeqEnforcer",
+   "blob_sha": "c333aeaefd7890bf1c7d19e56eadbae0b788602e",
+   "blob_size": 39557,
+   "end_line": 128,
+   "file": "src/xrpld/consensus/Validations.h",
+   "id": "E15",
+   "start_line": 98
+  },
+  {
+   "anchor": "laggards(",
+   "blob_sha": "c333aeaefd7890bf1c7d19e56eadbae0b788602e",
+   "blob_size": 39557,
+   "end_line": 1147,
+   "file": "src/xrpld/consensus/Validations.h",
+   "id": "E16",
+   "start_line": 1127
+  },
+  {
+   "anchor": "RCLValidationsAdaptor::now()",
+   "blob_sha": "669d69957da77a68bb5ace92a5e0ff789572be85",
+   "blob_size": 9726,
+   "end_line": 126,
+   "file": "src/xrpld/app/consensus/RCLValidations.cpp",
+   "id": "E17",
+   "start_line": 117
+  },
+  {
+   "anchor": "validationTime",
+   "blob_sha": "457555cc1c83cb617a6838e0099fc93e1d715b49",
+   "blob_size": 37567,
+   "end_line": 824,
+   "file": "src/xrpld/app/consensus/RCLConsensus.cpp",
+   "id": "E18",
+   "start_line": 813
+  },
+  {
+   "anchor": "seenTime_(signTime)",
+   "blob_sha": "27a18f8dcd6e0cf11a0c6c83e7e66ce860767fe4",
+   "blob_size": 9257,
+   "end_line": 253,
+   "file": "include/xrpl/protocol/STValidation.h",
+   "id": "E19",
+   "start_line": 231
+  },
+  {
+   "anchor": "getSignTime",
+   "blob_sha": "d2cb0586f261e9e06fa31f0da9c3fdc28cfc62ca",
+   "blob_size": 5493,
+   "end_line": 119,
+   "file": "src/libxrpl/protocol/STValidation.cpp",
+   "id": "E20",
+   "start_line": 111
+  },
+  {
+   "anchor": "ledgerPossibleTimeResolutions",
+   "blob_sha": "434f19b081886221689718818c6aae53f89a074b",
+   "blob_size": 6559,
+   "end_line": 47,
+   "file": "src/xrpld/consensus/LedgerTiming.h",
+   "id": "E21",
+   "start_line": 35
+  },
+  {
+   "anchor": "getNextLedgerTimeResolution",
+   "blob_sha": "434f19b081886221689718818c6aae53f89a074b",
+   "blob_size": 6559,
+   "end_line": 122,
+   "file": "src/xrpld/consensus/LedgerTiming.h",
+   "id": "E22",
+   "start_line": 78
+  },
+  {
+   "anchor": "roundCloseTime",
+   "blob_sha": "434f19b081886221689718818c6aae53f89a074b",
+   "blob_size": 6559,
+   "end_line": 143,
+   "file": "src/xrpld/consensus/LedgerTiming.h",
+   "id": "E23",
+   "start_line": 124
+  },
+  {
+   "anchor": "effCloseTime",
+   "blob_sha": "434f19b081886221689718818c6aae53f89a074b",
+   "blob_size": 6559,
+   "end_line": 169,
+   "file": "src/xrpld/consensus/LedgerTiming.h",
+   "id": "E24",
+   "start_line": 154
+  },
+  {
+   "anchor": "closeTimeVotes",
+   "blob_sha": "9ccc080857e2be382365dff5f349544b9907d9cf",
+   "blob_size": 65913,
+   "end_line": 1641,
+   "file": "src/xrpld/consensus/Consensus.h",
+   "id": "E25",
+   "start_line": 1507
+  },
+  {
+   "anchor": "prevLedger.closeTime() + 1s",
+   "blob_sha": "457555cc1c83cb617a6838e0099fc93e1d715b49",
+   "blob_size": 37567,
+   "end_line": 506,
+   "file": "src/xrpld/app/consensus/RCLConsensus.cpp",
+   "id": "E26",
+   "start_line": 491
+  },
+  {
+   "anchor": "medianCloseOffset(rawCloseTimes)",
+   "blob_sha": "457555cc1c83cb617a6838e0099fc93e1d715b49",
+   "blob_size": 37567,
+   "end_line": 728,
+   "file": "src/xrpld/app/consensus/RCLConsensus.cpp",
+   "id": "E27",
+   "start_line": 704
+  },
+  {
+   "anchor": "ledgerMIN_CLOSE",
+   "blob_sha": "e7b66899a83569f1120729a3cc2bd0e25540b622",
+   "blob_size": 10139,
+   "end_line": 103,
+   "file": "src/xrpld/consensus/Consensus.cpp",
+   "id": "E28",
+   "start_line": 26
+  },
+  {
+   "anchor": "checkConsensus(",
+   "blob_sha": "e7b66899a83569f1120729a3cc2bd0e25540b622",
+   "blob_size": 10139,
+   "end_line": 270,
+   "file": "src/xrpld/consensus/Consensus.cpp",
+   "id": "E29",
+   "start_line": 176
+  },
+  {
+   "anchor": "avalancheCutoffs",
+   "blob_sha": "d565bd9a5228de171cc777a0a098592f9e8505df",
+   "blob_size": 8302,
+   "end_line": 157,
+   "file": "src/xrpld/consensus/ConsensusParms.h",
+   "id": "E30",
+   "start_line": 134
+  },
+  {
+   "anchor": "isStale(peerCutoff)",
+   "blob_sha": "9ccc080857e2be382365dff5f349544b9907d9cf",
+   "blob_size": 65913,
+   "end_line": 1529,
+   "file": "src/xrpld/consensus/Consensus.h",
+   "id": "E31",
+   "start_line": 1501
+  },
+  {
+   "anchor": "timerEntry(app_.timeKeeper().closeTime()",
+   "blob_sha": "57331a855843f0a528289fb3a96f3251926a3aa5",
+   "blob_size": 158487,
+   "end_line": 1103,
+   "file": "src/xrpld/app/misc/NetworkOPs.cpp",
+   "id": "E32",
+   "start_line": 1095
+  },
+  {
+   "anchor": "rawCloseTimes_.self = now_;",
+   "blob_sha": "9ccc080857e2be382365dff5f349544b9907d9cf",
+   "blob_size": 65913,
+   "end_line": 1447,
+   "file": "src/xrpld/consensus/Consensus.h",
+   "id": "E33",
+   "start_line": 1433
+  },
+  {
+   "anchor": "5min",
+   "blob_sha": "67826c253286c69622334382ac89db711c7a60d2",
+   "blob_size": 70382,
+   "end_line": 398,
+   "file": "src/xrpld/app/ledger/detail/LedgerMaster.cpp",
+   "id": "E34",
+   "start_line": 364
+  },
+  {
+   "anchor": "validationVALID_WALL",
+   "blob_sha": "d565bd9a5228de171cc777a0a098592f9e8505df",
+   "blob_size": 8302,
+   "end_line": 66,
+   "file": "src/xrpld/consensus/ConsensusParms.h",
+   "id": "E35",
+   "start_line": 45
+  },
+  {
+   "anchor": "validators().expires()",
+   "blob_sha": "457555cc1c83cb617a6838e0099fc93e1d715b49",
+   "blob_size": 37567,
+   "end_line": 1042,
+   "file": "src/xrpld/app/consensus/RCLConsensus.cpp",
+   "id": "E36",
+   "start_line": 1030
+  },
+  {
+   "anchor": "previousCloseCorrect",
+   "blob_sha": "9ccc080857e2be382365dff5f349544b9907d9cf",
+   "blob_size": 65913,
+   "end_line": 1215,
+   "file": "src/xrpld/consensus/Consensus.h",
+   "id": "E37",
+   "start_line": 1179
+  },
+  {
+   "anchor": "Effective Close Time",
+   "blob_sha": "067e15d0c871020f1cbc86d28c503d6cf66b643f",
+   "blob_size": 30816,
+   "end_line": 169,
+   "file": "docs/consensus.md",
+   "id": "E38",
+   "start_line": 145
+  },
+  {
+   "anchor": "ledgerMAX_CONSENSUS",
+   "blob_sha": "d565bd9a5228de171cc777a0a098592f9e8505df",
+   "blob_size": 8302,
+   "end_line": 114,
+   "file": "src/xrpld/consensus/ConsensusParms.h",
+   "id": "E39",
+   "start_line": 78
+  },
+  {
+   "anchor": "avSTALLED_ROUNDS",
+   "blob_sha": "19df205249720c26747d359ec6f9542395c2c038",
+   "blob_size": 11494,
+   "end_line": 149,
+   "file": "src/xrpld/consensus/DisputedTx.h",
+   "id": "E40",
+   "start_line": 85
+  },
+  {
+   "anchor": "proposeFRESHNESS",
+   "blob_sha": "d565bd9a5228de171cc777a0a098592f9e8505df",
+   "blob_size": 8302,
+   "end_line": 72,
+   "file": "src/xrpld/consensus/ConsensusParms.h",
+   "id": "E41",
+   "start_line": 68
+  },
+  {
+   "anchor": "clock_type",
+   "blob_sha": "9ccc080857e2be382365dff5f349544b9907d9cf",
+   "blob_size": 65913,
+   "end_line": 348,
+   "file": "src/xrpld/consensus/Consensus.h",
+   "id": "E42",
+   "start_line": 337
+  },
+  {
+   "anchor": "ledgerGRANULARITY",
+   "blob_sha": "d565bd9a5228de171cc777a0a098592f9e8505df",
+   "blob_size": 8302,
+   "end_line": 102,
+   "file": "src/xrpld/consensus/ConsensusParms.h",
+   "id": "E43",
+   "start_line": 101
+  },
+  {
+   "anchor": "canBeCurrent",
+   "blob_sha": "5e0598d78bb3a93123da1742c71aa4fb4abe93d1",
+   "blob_size": 12583,
+   "end_line": 121,
+   "file": "src/xrpld/app/ledger/LedgerMaster.h",
+   "id": "E44",
+   "start_line": 116
+  },
+  {
+   "anchor": "closeFlags",
+   "blob_sha": "26552704258627756361a07e0c85a260ed229321",
+   "blob_size": 33022,
+   "end_line": 389,
+   "file": "src/xrpld/app/ledger/Ledger.cpp",
+   "id": "E45",
+   "start_line": 377
+  },
+  {
+   "anchor": "medianCloseOffset",
+   "blob_sha": "aef93a91988829f00abbec16b3eae8433a2afb07",
+   "blob_size": 10118,
+   "end_line": 260,
+   "file": "src/xrpld/consensus/ConsensusTypes.h",
+   "id": "E46",
+   "start_line": 191
+  },
+  {
+   "anchor": "isStale",
+   "blob_sha": "6734d59205a5c2e6200f6b516f46c112b9ed76b5",
+   "blob_size": 8671,
+   "end_line": 164,
+   "file": "src/xrpld/consensus/ConsensusProposal.h",
+   "id": "E47",
+   "start_line": 159
+  },
+  {
+   "anchor": "sLCF_NoConsensusTime",
+   "blob_sha": "0b35979971a1c5493875eaa478b6e2db1a0071bf",
+   "blob_size": 3290,
+   "end_line": 87,
+   "file": "include/xrpl/protocol/LedgerHeader.h",
+   "id": "E48",
+   "start_line": 82
+  },
+  {
+   "anchor": "withTrie",
+   "blob_sha": "c333aeaefd7890bf1c7d19e56eadbae0b788602e",
+   "blob_size": 39557,
+   "end_line": 491,
+   "file": "src/xrpld/consensus/Validations.h",
+   "id": "E49",
+   "start_line": 483
+  },
+  {
+   "anchor": "avCT_CONSENSUS_PCT",
+   "blob_sha": "d565bd9a5228de171cc777a0a098592f9e8505df",
+   "blob_size": 8302,
+   "end_line": 160,
+   "file": "src/xrpld/consensus/ConsensusParms.h",
+   "id": "E50",
+   "start_line": 159
+  },
+  {
+   "anchor": "increaseLedgerTimeResolutionEvery",
+   "blob_sha": "434f19b081886221689718818c6aae53f89a074b",
+   "blob_size": 6559,
+   "end_line": 53,
+   "file": "src/xrpld/consensus/LedgerTiming.h",
+   "id": "E51",
+   "start_line": 49
+  },
+  {
+   "anchor": "ledgerIDLE_INTERVAL",
+   "blob_sha": "d565bd9a5228de171cc777a0a098592f9e8505df",
+   "blob_size": 8302,
+   "end_line": 83,
+   "file": "src/xrpld/consensus/ConsensusParms.h",
+   "id": "E52",
+   "start_line": 81
+  }
+ ],
+ "pinned_commit": "0085a1ff885d6a446369cf73a4430f75af22be55",
+ "repo": "postfiatd"
+}
