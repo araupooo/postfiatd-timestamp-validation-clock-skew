@@ -48,11 +48,11 @@ Only deterministic source parsing and simulation runs. No live node, no submitte
 
 CI workflow runs page: https://github.com/araupooo/postfiatd-timestamp-validation-clock-skew/actions/workflows/verify.yml
 
-Specific CI run URL: TO-FILL (repo not created yet; fill after upload with the run URL for the verify workflow on the final HEAD).
+Specific CI run URL: https://github.com/araupooo/postfiatd-timestamp-validation-clock-skew/actions/runs/45255904318 (verify workflow, completed success on HEAD 7e9494915503ad97bf17a34d7a2d1508cf9b48b6).
 
 ## Fresh-clone reproduction log
 
-Fresh-clone repro log SHA-256: TO-FILL (fill after upload; the log is `outputs/fresh-clone-run.log`).
+Fresh-clone repro log SHA-256: 39f6082b9334b5211852b25d463f56e707e2de0843239ba4b52925d5114b5b01 (the log is `outputs/fresh-clone-run.log`).
 
 ## File map
 
